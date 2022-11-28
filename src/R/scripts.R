@@ -1,0 +1,18 @@
+
+library(here)
+
+source(here("src", "R", "constants.R"))
+source(here("src", "R", "mercury.R"))
+source(here("src", "R", "venus.R"))
+source(here("src", "R", "earthMoonBarycenter.R"))
+source(here("src", "R", "mars.R"))
+source(here("src", "R", "jupiter.R"))
+source(here("src", "R", "saturn.R"))
+source(here("src", "R", "uranus.R"))
+source(here("src", "R", "neptune.R"))
+source(here("src", "R", "pluto.R"))
+source(here("src", "R", "sun.R"))
+source(here("src", "R", "moon.R"))
+source(here("src", "R", "nutation.R"))
+source(here("src", "R", "earth.R"))
+source(here("src", "R", "date.R"))
