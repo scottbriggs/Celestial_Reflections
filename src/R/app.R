@@ -84,7 +84,7 @@ server <- function(input, output) {
       }
     })
     
-    output$de441Table <- renderTable(body(), digits = 9)
+    output$de441Table <- renderTable(body(), digits = 12)
     
 }
 
