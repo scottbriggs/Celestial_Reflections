@@ -10,11 +10,11 @@ dmsToDeg <- function(dms)
   amin <- dms[2]
   asec <- dms[3]
   
-  if (deg < 0){
+  if (deg < 0 | amin < 0 | asec < 0){
     sgn <- -1
   }
   
-  decDeg <- sgn * (abs(deg) + amin/60 + asec/3600)
+  decDeg <- sgn * (abs(deg) + abs(amin)/60 + abs(asec)/3600)
   
   return (decDeg)
 }
@@ -64,6 +64,7 @@ hourToHMS <- function(decHr)
   return (hms)
 }
 
+# Return string for degrees, arcminutes, and arcseconds
 dmsString <- function(dms)
 {
   str <- sprintf("%s %d\u00B0 %d' %.2f",
@@ -72,6 +73,7 @@ dmsString <- function(dms)
   return (str)
 }
 
+# Return string for hours, minutes, and seconds
 hmsString <- function(hms)
 {
   str <- sprintf("%dh %dm %.2fs", hms[1], hms[2], hms[3])

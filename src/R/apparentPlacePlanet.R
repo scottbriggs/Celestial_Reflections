@@ -1,6 +1,39 @@
 
 # Functions to calculate the apparent place of a solar system body
 
+# Calculate the apparent place of a planet.
+# jd = the julian day number of interest
+# func1 represents a function to calculate the barycentric position of the planet
+apparentPlacePlanet <- function(jd, func1)
+{
+  # Calculate the epoch of observation
+  t <- epochOfObs(jd)
+  
+  # Extract the barycentric position and velocity of the Earth and convert from
+  # KM and KM/sec to AU and AU/day
+  earth_ssb <- positionEarthSSB(t)
+  earth_ssb <- earth_ssb / KM2AU
+  
+  # Extract the barycentric position and velocity of the Sun and convert from
+  # KM and KM/sec to AU and AU/day
+  sun_ssb <- positionSunSSB(t)
+  sun_ssb <- sun_ssb / KM2AU
+  
+  # Create the heliocentric position of the Earth
+  helio_earth <- earth_ssb - sun_ssb
+  
+  # Extract the barycentric position and velocity of the planet and convert from
+  # KM and KM/sec to AU and AU/day
+  planet_ssb <- func1(t)
+  planet_ssb <- planet_ssb / KM2AU
+  
+  # Calculate the geometric distance between the positions of the center of mass
+  # of the planet and the Earth
+  geom_dist <- geometricDistance(planet_ssb[,1], earth_ssb[,1])
+  
+  
+}
+
 # Epoch of observation
 # jd = julian day number
 epochOfObs <- function(jd)
