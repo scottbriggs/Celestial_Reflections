@@ -1,6 +1,20 @@
 
 # Functions to calculate the apparent place of a solar system body
 
+# Calculate the apparent place of the Sun
+# jd = the julian day number of interest
+apparentPlaceSun <- function(jd)
+{
+  
+}
+
+# Calculate the apparent place of the Moon
+# jd = the julian day number of interest
+apparentPlaceMoon <- function(jd)
+{
+  
+}
+
 # Calculate the apparent place of a planet.
 # jd = the julian day number of interest
 # func1 represents a function to calculate the barycentric position of the planet
@@ -42,7 +56,7 @@ apparentPlacePlanet <- function(jd, func1)
   # Adjust for Precession
   prec <- precessionMatrix(jd)
   u4 <- prec %*% u3
-
+  
   return (c(u4[1,1], u4[2,1], u4[3,1], geom_dist))
 }
 
@@ -93,4 +107,3 @@ aberrationOfLight <- function(body, earth)
   
   return (vecNorm(body) * V)
 }
-
