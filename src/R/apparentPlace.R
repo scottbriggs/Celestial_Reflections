@@ -12,7 +12,51 @@ apparentPlaceSun <- function(jd)
 # jd = the julian day number of interest
 apparentPlaceMoon <- function(jd)
 {
+  # Calculate the epoch of observation
+  t <- epochOfObs(jd)
   
+  # Extract the barycentric position and velocity of the Earth and convert from
+  # KM and KM/sec to AU and AU/Day
+  earth_ssb <- positionEarthSSB(t)
+  earth_ssb <- earth_ssb / KM2AU
+
+  # Extract the geocentric position and velocity of the moon and convert from
+  # KM and KM/sec to AU and AU/Day
+  moon_geo <- positionMoonGEO(t)
+  moon_geo <- moon_geo / KM2AU
+
+  # Calculate the geometric distance of the moon in AU
+  geom_dist <- vecNorm(moon_geo[,1])
+  
+  # Calculate the light travel time between the planet and Earth and update the
+  # planet position and velocity
+  tau <- geom_dist / CAUD
+  moon_geo <- positionMoonGEO(t - tau)
+  moon_geo <- moon_geo / KM2AU
+
+  # Adjust for the abberation of light
+  abberation <- aberrationOfLight(moon_geo[,1], earth_ssb[,2])
+  u1 <- moon_geo[,1] + abberation
+  
+  # Adjust for Precession
+  prec <- precessionMatrix(jd)
+  u2 <- prec %*% u1
+  
+  # Adjust for Nutation
+  nut_matrix <- nutation_matrix(jd)
+  u3 <- nut_matrix %*% u2
+  
+  sinpi = EARTHRADKM / (geom_dist * KM2AU)
+  hor_parallax <- asin(sinpi)
+  semi_diameter <- asin(0.272493 * sinpi)
+  
+  # Calculate the horizontal parallax in radians
+  hor_parallax <- asin(EARTHRADKM/(geom_dist*KM2AU))
+  
+  # Return the moon's position vector, geocentric distance in earth radii,
+  # horizontal parallax in radians, and the semi-diameter in radians
+  return (c(u3[1,1], u3[2,1], u3[3,1], 
+            geom_dist*KM2AU/EARTHRADKM, hor_parallax, semi_diameter))
 }
 
 # Calculate the apparent place of a planet.
@@ -49,13 +93,13 @@ apparentPlacePlanet <- function(jd, func1)
   abberation <- aberrationOfLight(u1[,1], earth_ssb[,2])
   u2 <- u1[,1] + abberation
   
-  # Adjust for Nutation
-  nut_matrix <- nutation_matrix(jd)
-  u3 <- nut_matrix %*% u2
-  
   # Adjust for Precession
   prec <- precessionMatrix(jd)
-  u4 <- prec %*% u3
+  u3 <- prec %*% u2
+  
+  # Adjust for Nutation
+  nut_matrix <- nutation_matrix(jd)
+  u4 <- nut_matrix %*% u3
   
   return (c(u4[1,1], u4[2,1], u4[3,1], geom_dist))
 }

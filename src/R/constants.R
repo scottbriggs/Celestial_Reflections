@@ -18,6 +18,7 @@ GAUSSK <- 0.01720209895 # Gaussian Gravitational Constant
 EMRAT <- 81.3005690741906 # EMRAT
 MUC <- 2 * GAUSSK * GAUSSK / CAUD * CAUD # MUC
 EARTHRADM <- 6378140.0 # Equatorial Radius of the Earth in meters
+EARTHRADKM <- EARTHRADM / 1000 # Equatorial Radius of the Earth in kilometers
 EARTHRADAU <- EARTHRADM / 1000 / KM2AU # Equatorial Radius of the Earth in AU
 FLAT <- 1/298.257 # Flattening of the Earth's reference ellipsoid (IAU 1976)
 EPOCHJ2000 <- 2451545.0 # Julian day for J2000
