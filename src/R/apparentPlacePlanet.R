@@ -14,14 +14,6 @@ apparentPlacePlanet <- function(jd, func1)
   earth_ssb <- positionEarthSSB(t)
   earth_ssb <- earth_ssb / KM2AU
   
-  # Extract the barycentric position and velocity of the Sun and convert from
-  # KM and KM/sec to AU and AU/day
-  sun_ssb <- positionSunSSB(t)
-  sun_ssb <- sun_ssb / KM2AU
-  
-  # Create the heliocentric position of the Earth
-  helio_earth <- earth_ssb - sun_ssb
-  
   # Extract the barycentric position and velocity of the planet and convert from
   # KM and KM/sec to AU and AU/day
   planet_ssb <- func1(t)
@@ -29,9 +21,29 @@ apparentPlacePlanet <- function(jd, func1)
   
   # Calculate the geometric distance between the positions of the center of mass
   # of the planet and the Earth
-  geom_dist <- geometricDistance(planet_ssb[,1], earth_ssb[,1])
+  u <- planet_ssb - earth_ssb
+  geom_dist <- vecNorm(u[,1])
   
+  # Calculate the light travel time between the planet and Earth and update the
+  # planet position and velocity
+  tau <- geom_dist / CAUD
+  planet_ssb <- func1(t - tau)
+  planet_ssb <- planet_ssb / KM2AU
+  u1 <- planet_ssb - earth_ssb
   
+  # Adjust for the abberation of light
+  abberation <- aberrationOfLight(u1[,1], earth_ssb[,2])
+  u2 <- u1[,1] + abberation
+  
+  # Adjust for Nutation
+  nut_matrix <- nutation_matrix(jd)
+  u3 <- nut_matrix %*% u2
+  
+  # Adjust for Precession
+  prec <- precessionMatrix(jd)
+  u4 <- prec %*% u3
+
+  return (c(u4[1,1], u4[2,1], u4[3,1], geom_dist))
 }
 
 # Epoch of observation
@@ -46,15 +58,7 @@ epochOfObs <- function(jd)
   
   t <- jd + (s / SEC2DAY)
   
-  return(t)
-}
-
-# Geometric distance of a solar system body from the Earth
-# Body is a position vector of length 3
-# Earth is a position vector of length 3
-geometricDistance <- function(body, earth)
-{
-  return(vecNorm(body - earth))
+  return (t)
 }
 
 # Body is a position vector of length 3
@@ -78,7 +82,7 @@ relativisticDeflectionOfLight <- function(body, earth, sun)
   
   u1 <- vecNorm(u) * (u + g1/g2 * (tmp1 - tmp2))
   
-  return(u1)
+  return (u1)
 }
 
 # body is a position vector of length 3
@@ -87,6 +91,6 @@ aberrationOfLight <- function(body, earth)
 {
   V <- earth / CAUD
   
-  return(vecNorm(body) * V)
+  return (vecNorm(body) * V)
 }
 

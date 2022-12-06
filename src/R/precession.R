@@ -38,7 +38,7 @@ precessionMatrix <- function(jd)
           231.10, 1610.0, 620.0, 157.87, 220.30, 1200.0)
   
   # Obliquity at J2000.0
-  eps0 <- 84381.406 * AS2R
+  eps0 <- 84381.406 * ARCSEC2RAD
   
   # Julian centuries since J2000.0
   T <- (jd - 2451545.0) / 36525
@@ -58,8 +58,8 @@ precessionMatrix <- function(jd)
   QA <- -1600.886300 + 1.1689818 * T - 0.00000020 * T2 - 437E-9 * T3 + sum_qa
   
   # Convert to radians
-  P <- PA * AS2R
-  Q <- QA * AS2R
+  P <- PA * ARCSEC2RAD
+  Q <- QA * ARCSEC2RAD
   
   # Calculate the ecliptic pole vector
   temp <- c(sqrt(1 - P*P - Q*Q), 0.0)
@@ -85,8 +85,8 @@ precessionMatrix <- function(jd)
   YA <- -73750.930350 - 0.7675452 * T - 0.00018725 * T2 + 231E-9 * T3 + sum_ya
   
   # Convert to radians
-  X <- XA * AS2R
-  Y <- YA * AS2R
+  X <- XA * ARCSEC2RAD
+  Y <- YA * ARCSEC2RAD
   
   # Calculate the equator pole vector
   equator_pole <- c(0.0, 0.0, 0.0)
@@ -104,7 +104,7 @@ precessionMatrix <- function(jd)
   prec_mat <- matrix(0.0, nrow=3, ncol=3)
   
   v <- crossProduct(equator_pole, ecliptic_pole)
-  normal_vec <- unit_vector(v)
+  normal_vec <- unitVector(v)
   a <- crossProduct(equator_pole, normal_vec)
   
   prec_mat[1,1] <- normal_vec[1]
