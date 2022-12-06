@@ -5,7 +5,44 @@
 # jd = the julian day number of interest
 apparentPlaceSun <- function(jd)
 {
+  # Calculate the epoch of observation
+  t <- epochOfObs(jd)
   
+  # Extract the barycentric position and velocity of the Earth and convert from
+  # KM and KM/sec to AU and AU/day
+  earth_ssb <- positionEarthSSB(t)
+  earth_ssb <- earth_ssb / KM2AU
+  
+  # Extract the barycentric position and velocity of the Sun and convert from
+  # KM and KM/sec to AU and AU/day
+  sun_ssb <- positionSunSSB(t)
+  sun_ssb <- sun_ssb / KM2AU
+  
+  # Calculate the geometric distance between the positions of the center of mass
+  # of the sun and the Earth
+  u <- sun_ssb - earth_ssb
+  geom_dist <- vecNorm(u[,1])
+  
+  # Calculate the light travel time between the sun and Earth and update the
+  # sun's position and velocity
+  tau <- geom_dist / CAUD
+  sun_ssb <- positionSunSSB(t - tau)
+  sun_ssb <- sun_ssb / KM2AU
+  u1 <- sun_ssb - earth_ssb
+  
+  # Adjust for the abberation of light
+  abberation <- aberrationOfLight(u1[,1], earth_ssb[,2])
+  u2 <- u1[,1] + abberation
+  
+  # Adjust for Precession
+  prec <- precessionMatrix(jd)
+  u3 <- prec %*% u2
+  
+  # Adjust for Nutation
+  nut_matrix <- nutation_matrix(jd)
+  u4 <- nut_matrix %*% u3
+  
+  return (c(u4[1,1], u4[2,1], u4[3,1], geom_dist))
 }
 
 # Calculate the apparent place of the Moon
