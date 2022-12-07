@@ -2,10 +2,12 @@
 # Functions to calculate right ascension (RA) and declination (Dec) from position vectors
 # and perform coordinate transformations
 
-# Convert a position vector to RA and Dec
+# Convert a rectangular position vector to polar coordinates
 # pos is a position vector (x, y, z)
-# Returns R, phi, and theta
-pos2RaDec <- function(pos){
+# Returns the polar distance r
+# phi the longitudinal component
+# theta the latitudinal component
+rectToPolar <- function(pos){
   rho_sqr <- pos[1] * pos[1] + pos[2] * pos[2]
   m_r <- sqrt(rho_sqr + pos[3] * pos[3])
   m_phi <- 0.0
@@ -65,7 +67,7 @@ rotationMatrix <- function(axis, phi)
 # Obliquity is in radians
 equatorialToEcliptical <- function(pos, obliquity)
 {
-  pos1 <- rotation_matrix(1, obliquity) %*% pos
+  pos1 <- rotationMatrix(1, obliquity) %*% pos
   
   return (pos1)
 }
@@ -74,7 +76,7 @@ equatorialToEcliptical <- function(pos, obliquity)
 # Obliquity is in radians
 eclipticalToEquatorial <- function(pos, obliquity)
 {
-  pos1 <- rotation_matrix(1, -obliquity) %*% pos
+  pos1 <- rotationMatrix(1, -obliquity) %*% pos
   
   return(pos1)
 }
@@ -84,7 +86,7 @@ eclipticalToEquatorial <- function(pos, obliquity)
 equatorialToHorizon <- function(hour_angle, dec, obs_lat)
 {
   vec1 <- c(hour_angle, dec, 1)
-  vec2 <- rotation_matrix(2, (PI/2 - obs_lat)) %*% vec1
+  vec2 <- rotationMatrix(2, (PI/2 - obs_lat)) %*% vec1
   
   azimuth <- vec2[1]
   altitude <- vec2[2]
@@ -97,7 +99,7 @@ equatorialToHorizon <- function(hour_angle, dec, obs_lat)
 horizonToEquatorial <- function(azimuth, altitude, obs_lat)
 {
   vec1 <- c(azimuth, altitude, 1)
-  vec2 <- rotation_matrix(2, -(PI/2 - obs_lat)) %*% vec1
+  vec2 <- rotationMatrix(2, -(PI/2 - obs_lat)) %*% vec1
   
   hour_angle <- vec2[1]
   dec <- vec2[2]

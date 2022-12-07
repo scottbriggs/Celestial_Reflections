@@ -42,7 +42,10 @@ apparentPlaceSun <- function(jd)
   nut_matrix <- nutation_matrix(jd)
   u4 <- nut_matrix %*% u3
   
-  return (c(u4[1,1], u4[2,1], u4[3,1], geom_dist))
+  z <- list(c(u4[1,1], u4[2,1], u4[3,1]), geom_dist)
+  names(z) <- c("Position Vector", "Geometric Distance")
+  
+  return (z)
 }
 
 # Calculate the apparent place of the Moon
@@ -92,8 +95,12 @@ apparentPlaceMoon <- function(jd)
   
   # Return the moon's position vector, geocentric distance in earth radii,
   # horizontal parallax in radians, and the semi-diameter in radians
-  return (c(u3[1,1], u3[2,1], u3[3,1], 
-            geom_dist*KM2AU/EARTHRADKM, hor_parallax, semi_diameter))
+  z <- list(c(u3[1,1], u3[2,1], u3[3,1]), geom_dist*KM2AU/EARTHRADKM,
+            hor_parallax, semi_diameter)
+  names(z) <- c("Position Vector", "Geometric Distance",
+                "Horizontal Parallax", "Semi-Diameter")
+  
+  return (z)
 }
 
 # Calculate the apparent place of a planet.
@@ -138,7 +145,10 @@ apparentPlacePlanet <- function(jd, func1)
   nut_matrix <- nutation_matrix(jd)
   u4 <- nut_matrix %*% u3
   
-  return (c(u4[1,1], u4[2,1], u4[3,1], geom_dist))
+  z <- list(c(u4[1,1], u4[2,1], u4[3,1]), geom_dist)
+  names(z) <- c("Position Vector", "Geometric Distance")
+  
+  return (z)
 }
 
 # Epoch of observation
