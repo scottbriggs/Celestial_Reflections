@@ -39,6 +39,7 @@ unitVector <- function(x)
   return (result)
 }
 
+# Reduce a to the range 0 <= a < b
 amodulo <- function(a, b)
 {
   return(x <- a - b * floor(a/b))

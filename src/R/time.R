@@ -147,3 +147,22 @@ deltaT <- function(year, month)
   
   return (delta_t)
 }
+
+# Calculate the mean and apparent sidereal time.
+# The mean sidereal time is the default function.
+# jd is the julian day number in universal time at the time of observation
+meanSiderealTime <- function(jd)
+{
+  T <- (jd - EPOCHJ2000) / DAYSJULCENT
+  
+  # Calculate mean sidereal time in degrees
+  st <- 280.46061837 + 360.98564736629 * (jd - EPOCHJ2000) +
+    (0.000387933 - (1/38710000) * T) * T * T
+  
+  # Convert result to the range 0 - 360 degrees
+  st <- amodulo(st, 360)
+  
+  # Convert degrees to hours
+  st <- st / 15
+  
+}

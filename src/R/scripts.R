@@ -21,3 +21,5 @@ source(here("src", "R", "time.R"))
 source(here("src", "R", "obliquity.R"))
 source(here("src", "R", "apparentPlace.R"))
 source(here("src", "R", "coordinate.R"))
+source(here("src", "R", "riseSet.R"))
+
