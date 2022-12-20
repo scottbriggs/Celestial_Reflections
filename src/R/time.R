@@ -2,6 +2,7 @@
 # Functions to convert between degrees, arcminutes, and arcseconds and
 # decimal degrees, and hours, minutes, and seconds to decimal hours
 
+# Convert degrees, arcminutes, and arcseconds to decimal degrees
 # dms is a vector consisting of degrees, arcminutes, and arcseconds
 dmsToDeg <- function(dms)
 {
@@ -19,6 +20,7 @@ dmsToDeg <- function(dms)
   return (decDeg)
 }
 
+# Convert decimal degrees to degrees, arcminutes, and arcseconds
 # decDeg represents decimal degrees
 degToDMS <- function(decDeg)
 {
@@ -38,6 +40,7 @@ degToDMS <- function(decDeg)
   return (list(sgn, dms))
 }
 
+# Convert hours, minutes, and seconds to decimal hours
 # hms is a vector consisting of hours, minutes, and seconds
 hmsToHour <- function(hms)
 {
@@ -50,6 +53,7 @@ hmsToHour <- function(hms)
   return (decHr)
 }
 
+# Convert decimal hours to hours, minutes, and seconds
 # decHr represents decimal hours
 hourToHMS <- function(decHr)
 {
@@ -62,6 +66,20 @@ hourToHMS <- function(decHr)
   hms <- c(hr, min, sec)
   
   return (hms)
+}
+
+# Convert decimal hours to hours and minutes
+# hm is a vector consisting of hours and minutes
+hourToHM <- function(decHr)
+{
+  x <- decHr
+  hr <- as.integer(x)
+  x <- (x - hr) * 60
+  min <- as.integer(x)
+  
+  hm <- c(hr, min)
+  
+  return (hm)
 }
 
 # Return string for degrees, arcminutes, and arcseconds
@@ -77,6 +95,14 @@ dmsString <- function(dms)
 hmsString <- function(hms)
 {
   str <- sprintf("%dh %dm %.2fs", hms[1], hms[2], hms[3])
+  
+  return(str)
+}
+
+# Return string for hours and minutes
+hmString <- function(hm)
+{
+  str <- sprintf("%dh %dm ", hm[1], hm[2])
   
   return(str)
 }
@@ -148,8 +174,7 @@ deltaT <- function(year, month)
   return (delta_t)
 }
 
-# Calculate the mean and apparent sidereal time.
-# The mean sidereal time is the default function.
+# Calculate the mean sidereal time in hours
 # jd is the julian day number in universal time at the time of observation
 meanSiderealTime <- function(jd)
 {
@@ -165,4 +190,5 @@ meanSiderealTime <- function(jd)
   # Convert degrees to hours
   st <- st / 15
   
+  return (st)
 }

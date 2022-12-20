@@ -5,9 +5,11 @@ PI2 <- 2*PI
 RAD2DEG <- 180/PI # Radians to degrees
 DEG2RAD <- PI/180 # Degrees to radians
 RAD2HR <- 12/PI # Radians to hours
-ARCSEC2RAD <- 4.848136811095359935899141E-6
-RAD2ARCSEC <- 206264.79821012
+ARCSEC2RAD <- 4.848136811095359935899141E-6 # Arcseconds to radians
+RAD2ARCSEC <- 206264.79821012 # Radians to arcseconds
 SEC2DAY <- 86400 # Seconds per Day
+HR2RAD <- PI/12 # Hours to radians
+RAD2HR <- 12/PI # Radians to hours
 
 # Astronomical Constants
 KM2AU <- 149597870.7 # Astronomical Unit in Kilometers (KM)

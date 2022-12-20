@@ -56,9 +56,100 @@ quadraticInterpolation <- function(yMinus, y, yPlus)
   }
 }
 
-# Rise - Set Events
-riseSetEvent <- function()
+# Rise - Set Events for the Sun
+# Calculates the rise and/or set of the Sun for a given day
+# jd_ut is the julian day number for universal time
+# delta T is the correction in seconds for dynamical time
+# ObsLat is the observer latitude in degrees, + North, - South
+# ObsLong is the observer longitude in degrees, + East, - West
+riseSetEventSun <- function(jd_ut, deltaT, obsLat, obsLong)
 {
+  # Take the integer part of the julian day number so that the rise set calculations
+  # start at midnight
+  jd_ut_start <- as.integer(jd_ut)
   
+  # Calculate the julian day number in dynamical time
+  jd_td <- jd_ut_start + deltaT/SEC2DAY
+  
+  # Calculate the standard altitude for rise and set of the sun
+  std_alt <- -0.50/60 * DEG2RAD
+  
+  # Convert latitude and longitude to radians
+  latRad <- obsLat * DEG2RAD
+  cosLat <- cos(latRad)
+  sinLat <- sin(latRad)
+  longRad <- obsLong * DEG2RAD
+  
+  # Search for rise and set times for the day of interest
+  ap_sun <- apparentPlaceSun(jd_td)
+  pos <- c(ap[["Position Vector"]][1], ap[["Position Vector"]][2], 
+           ap[["Position Vector"]][3])
+  polar <- rectToPolar(pos)
+  ra <- polar[2]
+  dec <- polar[3]
+  hourAngle <- meanSiderealTime(jd_ut_start) * HR2RAD + longRad - ra
+  sinAlt <- (sinLat * sin(dec) + cosLat * cos(dec) * cos(hourAngle)) - sin(std_alt)
+  yMinus <- sinAlt
+  aboveFlag <- FALSE
+  aboveFlag <- (y_minus > 0)
+  riseFlag <- FALSE
+  setFlag <- FALSE
+  localTimeRise <- 0
+  localTimeSet <- 0
+  hour <- 1
+  
+  while ( !((hour == 25) | (rises & sets)) ) {
+    ap_sun <- apparentPlaceSun(jd_td + hour/24)
+    pos <- c(ap[["Position Vector"]][1], ap[["Position Vector"]][2], 
+             ap[["Position Vector"]][3])
+    polar <- rectToPolar(pos)
+    ra <- polar[2]
+    dec <- polar[3]
+    hourAngle <- meanSiderealTime(jd_ut_start + hour/24) * HR2RAD + longRad - ra
+    sinAlt <- (sinLat * sin(dec) + cosLat * cos(dec) * cos(hourAngle)) - sin(std_alt)
+    y0 <- sinAlt
+    
+    ap_sun <- apparentPlaceSun(jd_td + (hour + 1)/24)
+    pos <- c(ap[["Position Vector"]][1], ap[["Position Vector"]][2], 
+             ap[["Position Vector"]][3])
+    polar <- rectToPolar(pos)
+    ra <- polar[2]
+    dec <- polar[3]
+    hourAngle <- meanSiderealTime(jd_ut_start + (hour+1)/24) * HR2RAD + longRad - ra
+    sinAlt <- (sinLat * sin(dec) + cosLat * cos(dec) * cos(hourAngle)) - sin(std_alt)
+    yPlus <- sinAlt
+    
+    vect <- quadraticInterpolation(yMinus, y0, yPlus)
+    
+    if (vect["Num Roots"] == 1) {
+      if (yMinus < 0) {
+        localTimeRise <- hour + vect["Root 1"]
+        riseFlag <- TRUE
+      } else {
+        localTimeSet <- hour + vect["Root 1"]
+        setFlag <- TRUE
+      }
+    }
+    
+    if (vect["Num Roots"] == 2) {
+      if (vect["Ordinate"] < 0) {
+        localTimeRise <- hour + vect["Root 2"]
+        localTimeSet <- hour + vect["Root 1"]
+      } else {
+        localTimeRise <- hour + vect["Root 1"]
+        localTimeSet <- hour + vect["Root 2"]
+      }
+      riseFlag <- TRUE
+      setFlag <- TRUE
+    }
+    yMinus <- yPlus
+    hour <- hour + 2
+  }
+  
+  z <- list(riseFlag, localRiseTime, setFlag, localSetTime, aboveFlag)
+  names(z) <- c("Rise Flag", "Local Rise Time", "Set Flag", 
+                "local Set Time", "Above Flag")
+  
+  return(z)
 }
 
