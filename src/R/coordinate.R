@@ -3,19 +3,20 @@
 # and perform coordinate transformations
 
 # Convert a rectangular position vector to polar coordinates
-# pos is a position vector (x, y, z)
+# pos is a list with the position vector being a member of the list
 # Returns the polar distance r
-# phi the longitudinal component
-# theta the latitudinal component
+# phi the longitudinal component in radians
+# theta the latitudinal component in radians
 rectToPolar <- function(pos){
-  rho_sqr <- pos[1] * pos[1] + pos[2] * pos[2]
-  m_r <- sqrt(rho_sqr + pos[3] * pos[3])
+  rho_sqr <- pos[["Position Vector"]][1] * pos[["Position Vector"]][1] + 
+    pos[["Position Vector"]][2] * pos[["Position Vector"]][2]
+  m_r <- sqrt(rho_sqr + pos[["Position Vector"]][3] * pos[["Position Vector"]][3])
   m_phi <- 0.0
   
-  if (pos[1] == 0.0 & pos[2] == 0.0) {
+  if (pos[["Position Vector"]][1] == 0.0 & pos[["Position Vector"]][2] == 0.0) {
     m_phi <- 0.0
   } else {
-    m_phi <- atan2(pos[2], pos[1])
+    m_phi <- atan2(pos[["Position Vector"]][2], pos[["Position Vector"]][1])
   }
   
   if (m_phi < 0.0) {m_phi <- m_phi + PI2}
@@ -23,10 +24,10 @@ rectToPolar <- function(pos){
   rho <- sqrt(rho_sqr)
   m_theta <- 0.0
   
-  if (pos[3] == 0.0 & rho == 0.0) {
+  if (pos[["Position Vector"]][3] == 0.0 & rho == 0.0) {
     m_theta <- 0.0
   } else {
-    m_theta <- atan2(pos[3], rho)
+    m_theta <- atan2(pos[["Position Vector"]][3], rho)
   }
   
   z <- c(m_r, m_phi, m_theta)

@@ -1,5 +1,5 @@
 
-# Functions to calculate the apparent place of a solar system body
+# Functions to calculate the apparent place solar system bodies
 
 # Calculate the apparent place of the Sun
 # jd = the julian day number of interest
@@ -103,10 +103,9 @@ apparentPlaceMoon <- function(jd)
   return (z)
 }
 
-# Calculate the apparent place of a planet.
+# Calculate the apparent place of Mercury
 # jd = the julian day number of interest
-# func1 represents a function to calculate the barycentric position of the planet
-apparentPlacePlanet <- function(jd, func1)
+apparentPlaceMercury <- function(jd)
 {
   # Calculate the epoch of observation
   t <- epochOfObs(jd)
@@ -116,9 +115,9 @@ apparentPlacePlanet <- function(jd, func1)
   earth_ssb <- positionEarthSSB(t)
   earth_ssb <- earth_ssb / KM2AU
   
-  # Extract the barycentric position and velocity of the planet and convert from
+  # Extract the barycentric position and velocity of Mercury and convert from
   # KM and KM/sec to AU and AU/day
-  planet_ssb <- func1(t)
+  planet_ssb <- positionMercurySSB(t)
   planet_ssb <- planet_ssb / KM2AU
   
   # Calculate the geometric distance between the positions of the center of mass
@@ -129,7 +128,336 @@ apparentPlacePlanet <- function(jd, func1)
   # Calculate the light travel time between the planet and Earth and update the
   # planet position and velocity
   tau <- geom_dist / CAUD
-  planet_ssb <- func1(t - tau)
+  planet_ssb <- positionMercurySSB(t - tau)
+  planet_ssb <- planet_ssb / KM2AU
+  u1 <- planet_ssb - earth_ssb
+  
+  # Adjust for the abberation of light
+  abberation <- aberrationOfLight(u1[,1], earth_ssb[,2])
+  u2 <- u1[,1] + abberation
+  
+  # Adjust for Precession
+  prec <- precessionMatrix(jd)
+  u3 <- prec %*% u2
+  
+  # Adjust for Nutation
+  nut_matrix <- nutation_matrix(jd)
+  u4 <- nut_matrix %*% u3
+  
+  z <- list(c(u4[1,1], u4[2,1], u4[3,1]), geom_dist)
+  names(z) <- c("Position Vector", "Geometric Distance")
+  
+  return (z)
+}
+
+# Calculate the apparent place of Venus
+# jd = the julian day number of interest
+apparentPlaceVenus <- function(jd)
+{
+  # Calculate the epoch of observation
+  t <- epochOfObs(jd)
+  
+  # Extract the barycentric position and velocity of the Earth and convert from
+  # KM and KM/sec to AU and AU/day
+  earth_ssb <- positionEarthSSB(t)
+  earth_ssb <- earth_ssb / KM2AU
+  
+  # Extract the barycentric position and velocity of Venus and convert from
+  # KM and KM/sec to AU and AU/day
+  planet_ssb <- positionVenusSSB(t)
+  planet_ssb <- planet_ssb / KM2AU
+  
+  # Calculate the geometric distance between the positions of the center of mass
+  # of the planet and the Earth
+  u <- planet_ssb - earth_ssb
+  geom_dist <- vecNorm(u[,1])
+  
+  # Calculate the light travel time between the planet and Earth and update the
+  # planet position and velocity
+  tau <- geom_dist / CAUD
+  planet_ssb <- positionVenusSSB(t - tau)
+  planet_ssb <- planet_ssb / KM2AU
+  u1 <- planet_ssb - earth_ssb
+  
+  # Adjust for the abberation of light
+  abberation <- aberrationOfLight(u1[,1], earth_ssb[,2])
+  u2 <- u1[,1] + abberation
+  
+  # Adjust for Precession
+  prec <- precessionMatrix(jd)
+  u3 <- prec %*% u2
+  
+  # Adjust for Nutation
+  nut_matrix <- nutation_matrix(jd)
+  u4 <- nut_matrix %*% u3
+  
+  z <- list(c(u4[1,1], u4[2,1], u4[3,1]), geom_dist)
+  names(z) <- c("Position Vector", "Geometric Distance")
+  
+  return (z)
+}
+
+# Calculate the apparent place of Mars
+# jd = the julian day number of interest
+apparentPlaceMars <- function(jd)
+{
+  # Calculate the epoch of observation
+  t <- epochOfObs(jd)
+  
+  # Extract the barycentric position and velocity of the Earth and convert from
+  # KM and KM/sec to AU and AU/day
+  earth_ssb <- positionEarthSSB(t)
+  earth_ssb <- earth_ssb / KM2AU
+  
+  # Extract the barycentric position and velocity of Mars and convert from
+  # KM and KM/sec to AU and AU/day
+  planet_ssb <- positionMarsSSB(t)
+  planet_ssb <- planet_ssb / KM2AU
+  
+  # Calculate the geometric distance between the positions of the center of mass
+  # of the planet and the Earth
+  u <- planet_ssb - earth_ssb
+  geom_dist <- vecNorm(u[,1])
+  
+  # Calculate the light travel time between the planet and Earth and update the
+  # planet position and velocity
+  tau <- geom_dist / CAUD
+  planet_ssb <- positionMarsSSB(t - tau)
+  planet_ssb <- planet_ssb / KM2AU
+  u1 <- planet_ssb - earth_ssb
+  
+  # Adjust for the abberation of light
+  abberation <- aberrationOfLight(u1[,1], earth_ssb[,2])
+  u2 <- u1[,1] + abberation
+  
+  # Adjust for Precession
+  prec <- precessionMatrix(jd)
+  u3 <- prec %*% u2
+  
+  # Adjust for Nutation
+  nut_matrix <- nutation_matrix(jd)
+  u4 <- nut_matrix %*% u3
+  
+  z <- list(c(u4[1,1], u4[2,1], u4[3,1]), geom_dist)
+  names(z) <- c("Position Vector", "Geometric Distance")
+  
+  return (z)
+}
+
+# Calculate the apparent place of Jupiter
+# jd = the julian day number of interest
+apparentPlaceJupiter <- function(jd)
+{
+  # Calculate the epoch of observation
+  t <- epochOfObs(jd)
+  
+  # Extract the barycentric position and velocity of the Earth and convert from
+  # KM and KM/sec to AU and AU/day
+  earth_ssb <- positionEarthSSB(t)
+  earth_ssb <- earth_ssb / KM2AU
+  
+  # Extract the barycentric position and velocity of Jupiter and convert from
+  # KM and KM/sec to AU and AU/day
+  planet_ssb <- positionJupiterSSB(t)
+  planet_ssb <- planet_ssb / KM2AU
+  
+  # Calculate the geometric distance between the positions of the center of mass
+  # of the planet and the Earth
+  u <- planet_ssb - earth_ssb
+  geom_dist <- vecNorm(u[,1])
+  
+  # Calculate the light travel time between the planet and Earth and update the
+  # planet position and velocity
+  tau <- geom_dist / CAUD
+  planet_ssb <- positionJupiterSSB(t - tau)
+  planet_ssb <- planet_ssb / KM2AU
+  u1 <- planet_ssb - earth_ssb
+  
+  # Adjust for the abberation of light
+  abberation <- aberrationOfLight(u1[,1], earth_ssb[,2])
+  u2 <- u1[,1] + abberation
+  
+  # Adjust for Precession
+  prec <- precessionMatrix(jd)
+  u3 <- prec %*% u2
+  
+  # Adjust for Nutation
+  nut_matrix <- nutation_matrix(jd)
+  u4 <- nut_matrix %*% u3
+  
+  z <- list(c(u4[1,1], u4[2,1], u4[3,1]), geom_dist)
+  names(z) <- c("Position Vector", "Geometric Distance")
+  
+  return (z)
+}
+
+# Calculate the apparent place of Saturn
+# jd = the julian day number of interest
+apparentPlaceSaturn <- function(jd)
+{
+  # Calculate the epoch of observation
+  t <- epochOfObs(jd)
+  
+  # Extract the barycentric position and velocity of the Earth and convert from
+  # KM and KM/sec to AU and AU/day
+  earth_ssb <- positionEarthSSB(t)
+  earth_ssb <- earth_ssb / KM2AU
+  
+  # Extract the barycentric position and velocity of Saturn and convert from
+  # KM and KM/sec to AU and AU/day
+  planet_ssb <- positionSaturnSSB(t)
+  planet_ssb <- planet_ssb / KM2AU
+  
+  # Calculate the geometric distance between the positions of the center of mass
+  # of the planet and the Earth
+  u <- planet_ssb - earth_ssb
+  geom_dist <- vecNorm(u[,1])
+  
+  # Calculate the light travel time between the planet and Earth and update the
+  # planet position and velocity
+  tau <- geom_dist / CAUD
+  planet_ssb <- positionSaturnSSB(t - tau)
+  planet_ssb <- planet_ssb / KM2AU
+  u1 <- planet_ssb - earth_ssb
+  
+  # Adjust for the abberation of light
+  abberation <- aberrationOfLight(u1[,1], earth_ssb[,2])
+  u2 <- u1[,1] + abberation
+  
+  # Adjust for Precession
+  prec <- precessionMatrix(jd)
+  u3 <- prec %*% u2
+  
+  # Adjust for Nutation
+  nut_matrix <- nutation_matrix(jd)
+  u4 <- nut_matrix %*% u3
+  
+  z <- list(c(u4[1,1], u4[2,1], u4[3,1]), geom_dist)
+  names(z) <- c("Position Vector", "Geometric Distance")
+  
+  return (z)
+}
+
+# Calculate the apparent place of Uranus
+# jd = the julian day number of interest
+apparentPlaceUranus <- function(jd)
+{
+  # Calculate the epoch of observation
+  t <- epochOfObs(jd)
+  
+  # Extract the barycentric position and velocity of the Earth and convert from
+  # KM and KM/sec to AU and AU/day
+  earth_ssb <- positionEarthSSB(t)
+  earth_ssb <- earth_ssb / KM2AU
+  
+  # Extract the barycentric position and velocity of Uranus and convert from
+  # KM and KM/sec to AU and AU/day
+  planet_ssb <- positionUranusSSB(t)
+  planet_ssb <- planet_ssb / KM2AU
+  
+  # Calculate the geometric distance between the positions of the center of mass
+  # of the planet and the Earth
+  u <- planet_ssb - earth_ssb
+  geom_dist <- vecNorm(u[,1])
+  
+  # Calculate the light travel time between the planet and Earth and update the
+  # planet position and velocity
+  tau <- geom_dist / CAUD
+  planet_ssb <- positionUranusSSB(t - tau)
+  planet_ssb <- planet_ssb / KM2AU
+  u1 <- planet_ssb - earth_ssb
+  
+  # Adjust for the abberation of light
+  abberation <- aberrationOfLight(u1[,1], earth_ssb[,2])
+  u2 <- u1[,1] + abberation
+  
+  # Adjust for Precession
+  prec <- precessionMatrix(jd)
+  u3 <- prec %*% u2
+  
+  # Adjust for Nutation
+  nut_matrix <- nutation_matrix(jd)
+  u4 <- nut_matrix %*% u3
+  
+  z <- list(c(u4[1,1], u4[2,1], u4[3,1]), geom_dist)
+  names(z) <- c("Position Vector", "Geometric Distance")
+  
+  return (z)
+}
+
+# Calculate the apparent place of Neptune
+# jd = the julian day number of interest
+apparentPlaceNeptune <- function(jd)
+{
+  # Calculate the epoch of observation
+  t <- epochOfObs(jd)
+  
+  # Extract the barycentric position and velocity of the Earth and convert from
+  # KM and KM/sec to AU and AU/day
+  earth_ssb <- positionEarthSSB(t)
+  earth_ssb <- earth_ssb / KM2AU
+  
+  # Extract the barycentric position and velocity of Neptune and convert from
+  # KM and KM/sec to AU and AU/day
+  planet_ssb <- positionNeptuneSSB(t)
+  planet_ssb <- planet_ssb / KM2AU
+  
+  # Calculate the geometric distance between the positions of the center of mass
+  # of the planet and the Earth
+  u <- planet_ssb - earth_ssb
+  geom_dist <- vecNorm(u[,1])
+  
+  # Calculate the light travel time between the planet and Earth and update the
+  # planet position and velocity
+  tau <- geom_dist / CAUD
+  planet_ssb <- positionNeptuneSSB(t - tau)
+  planet_ssb <- planet_ssb / KM2AU
+  u1 <- planet_ssb - earth_ssb
+  
+  # Adjust for the abberation of light
+  abberation <- aberrationOfLight(u1[,1], earth_ssb[,2])
+  u2 <- u1[,1] + abberation
+  
+  # Adjust for Precession
+  prec <- precessionMatrix(jd)
+  u3 <- prec %*% u2
+  
+  # Adjust for Nutation
+  nut_matrix <- nutation_matrix(jd)
+  u4 <- nut_matrix %*% u3
+  
+  z <- list(c(u4[1,1], u4[2,1], u4[3,1]), geom_dist)
+  names(z) <- c("Position Vector", "Geometric Distance")
+  
+  return (z)
+}
+
+# Calculate the apparent place of Pluto
+# jd = the julian day number of interest
+apparentPlacePluto <- function(jd)
+{
+  # Calculate the epoch of observation
+  t <- epochOfObs(jd)
+  
+  # Extract the barycentric position and velocity of the Earth and convert from
+  # KM and KM/sec to AU and AU/day
+  earth_ssb <- positionEarthSSB(t)
+  earth_ssb <- earth_ssb / KM2AU
+  
+  # Extract the barycentric position and velocity of Pluto and convert from
+  # KM and KM/sec to AU and AU/day
+  planet_ssb <- positionPlutoSSB(t)
+  planet_ssb <- planet_ssb / KM2AU
+  
+  # Calculate the geometric distance between the positions of the center of mass
+  # of the planet and the Earth
+  u <- planet_ssb - earth_ssb
+  geom_dist <- vecNorm(u[,1])
+  
+  # Calculate the light travel time between the planet and Earth and update the
+  # planet position and velocity
+  tau <- geom_dist / CAUD
+  planet_ssb <- positionPlutoSSB(t - tau)
   planet_ssb <- planet_ssb / KM2AU
   u1 <- planet_ssb - earth_ssb
   

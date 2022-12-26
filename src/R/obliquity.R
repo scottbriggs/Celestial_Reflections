@@ -27,6 +27,7 @@ obliquity <- function(jd, nut_angles)
   true_obliquity <- mean_obliquity + nut_angles[[2]]
   
   obliq <- c(mean_obliquity, true_obliquity)
+  names(obliq) <- c("Mean_Obliquity", "True_Obliquity")
   
   return(obliq)
 }

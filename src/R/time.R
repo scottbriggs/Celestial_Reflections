@@ -174,21 +174,36 @@ deltaT <- function(year, month)
   return (delta_t)
 }
 
-# Calculate the mean sidereal time in hours
+# Calculate the mean and apparent sidereal time in radians
 # jd is the julian day number in universal time at the time of observation
-meanSiderealTime <- function(jd)
+siderealTime <- function(jd_ut, deltaT)
 {
-  T <- (jd - EPOCHJ2000) / DAYSJULCENT
+  T <- (jd_ut - EPOCHJ2000) / DAYSJULCENT
   
   # Calculate mean sidereal time in degrees
-  st <- 280.46061837 + 360.98564736629 * (jd - EPOCHJ2000) +
+  gmst <- 280.46061837 + 360.98564736629 * (jd_ut - EPOCHJ2000) +
     (0.000387933 - (1/38710000) * T) * T * T
   
   # Convert result to the range 0 - 360 degrees
-  st <- amodulo(st, 360)
+  gmst <- amodulo(gmst, 360)
   
-  # Convert degrees to hours
-  st <- st / 15
+  # Convert degrees to radians
+  gmst <- gmst * DEG2RAD
   
-  return (st)
+  # Calculate dynamical time
+  jd_td <- jd_ut + deltaT/24
+  
+  # Get the nutation angles in longitude and obliquity
+  nut_angles <- nutationAngles(jd_td)
+  
+  # Get the mean and true obliquity of the ecliptic
+  ob <- obliquity(jd_td, nut_angles)
+  
+  # Calculate apparent sidereal time
+  gast <- gmst + nut_angles["Nut_Long"] * cos(ob["True_Obliquity"])
+  
+  z <- c(gmst, gast)
+  names(z) <- c("GMST", "GAST")
+  
+  return (z)
 }

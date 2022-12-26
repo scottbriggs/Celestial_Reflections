@@ -49,9 +49,8 @@ nutationAngles <- function(jd)
     nut_ang[1,2] <- nut_ang[1,2] + (chebyshev_nut[v,1] * df_nutation[1,v+DE441NUMCOEFFNUTATION])
   }
   
-  colnames(nut_ang) <- c('Nutation in Longitude', 'Nutation in Obliquity')
+  colnames(nut_ang) <- c('Nut_Long', 'Nut_Oblq')
 
-  # Return the data
   return(nut_ang)
 }
 
