@@ -67,86 +67,140 @@ rotationMatrix <- function(axis, phi)
   return (mat)
 }
 
-# Convert an equatorial position vector to an ecliptical position vector
-# Obliquity is in radians
+# Convert equatorial coordinates - right ascension and declination to ecliptic
+# latitude and longitude
+# ra - right ascension in decimal hours
+# dec - declination in decimal degrees
+# obliquity in decimal degrees
+# eclipitic latitude in decimal degrees
+# ecliptic longitude in decimal degrees
 equatorialToEcliptical <- function(ra, dec, obliquity)
 {
-  sinra <- sin(ra)
-  cosra <- cos(ra)
-  sine <- sin(obliquity)
-  cose <- cos(obliquity)
-  sindec <- sin(dec)
-  cosdec <- cos(dec)
+  sinRA <- sin(ra*15*DEG2RAD)
+  cosRA <- cos(ra*15*DEG2RAD)
+  sinObliq <- sin(obliquity*DEG2RAD)
+  cosObliq <- cos(obliquity*DEG2RAD)
+  sinDec <- sin(dec*DEG2RAD)
+  cosDec <- cos(dec*DEG2RAD)
+  tanDec <- tan(dec*DEG2RAD)
   
-  numerator <- sinra * cose + tan(dec) * sine
-  eclipt_long <- atan2(numerator, cosra)
-  eclipt_lat <- asin(sindec * cose - cosdec * sine * sinra)
+  sinBeta <- sinDec * cosObliq - cosDec * sinObliq * sinRA
+  beta <- asin(sinBeta) * RAD2DEG
   
-  z <- c(eclipt_long, eclipt_lat)
+  numerator <- sinRA * cosObliq + tanDec * sinObliq
+  lambda <- atan(numerator/cosRA)*RAD2DEG
+  
+  if (numerator > 0 & cosRA < 0) {
+    lambda <- lambda + 180
+  } else if (numerator < 0 & cosRA > 0) {
+    lambda <- lambda + 360
+  } else if (numerator < 0 & cosRA < 0) {
+    lambda <- lambda + 180
+  }
+  
+  z <- c(beta, lambda)
   names(z) <- c("Eclipt_Long", "Eclipt_Lat")
   
   return (z)
 }
 
-# Convert an ecliptical position vector to an equatorial position vector
-# Obliquity is in radians
-eclipticalToEquatorial <- function(elong, elat, obliquity)
+# Convert ecliptical coordinates to equatorial coordinates
+# ecliptic latitude - beta in decimal degrees, [-90 - + 90] degrees
+# ecliptic longitude - lambda in decimal degrees, [0 360] degrees
+# obliquity in decimal degrees
+eclipticalToEquatorial <- function(beta, lambda, obliquity)
 {
-  sinelat <- sin(elat)
-  coselat <- cos(elat)
-  sine <- sin(obliquity)
-  cose <- cos(obliquity)
-  sinelong <- sin(elong)
-  coselong <- cos(elong)
+  sinBeta <- sin(beta*DEG2RAD)
+  cosBeta <- cos(beta*DEG2RAD)
+  tanBeta <- tan(beta*DEG2RAD)
+  sinObliq <- sin(obliquity*DEG2RAD)
+  cosObilq <- cos(obliquity*DEG2RAD)
+  sinLambda <- sin(lambda*DEG2RAD)
+  cosLambda <- cos(lambda*DEG2RAD)
   
-  numerator <- sinelong * cose - tan(elat) * sine
-  ra <- atan2(numerator, coselong)
-  dec <- asin(sinelat * cose + coselat * sine * sinelong)
+  sinDec <- sinBeta * cosObilq + cosBeta * sinObliq * sinLambda
+  dec <- asin(sinDec) * RAD2DEG
   
-  z <- c(ra, dec)
+  numerator <- sinLambda * cosObilq - tanBeta * sinObliq
+  ra <- atan(numerator/cosLambda) * RAD2DEG
+  
+  if (numerator > 0 & cosLambda < 0) {
+    ra <- ra + 180
+  } else if (numerator < 0 & cosLambda > 0) {
+    ra <- ra + 360
+  } else if (numerator < 0 & cosLambda < 0) {
+    ra <- ra + 180
+  }
+  
+  z <- c(ra/15, dec)
   names(z) <- c("RA", "DEC")
   
   return (z)
 }
 
-# Convert equatorial coordinates (hour angle, declination) in radians to
-# horizon coordinates (azimuth, altitude) in radians.
+# Convert equatorial coordinates to horizon coordinates
+# azimuth in decimal degrees, [0 - 360] degrees
+# altitude in decimal degrees, [-90 - +90] degrees
+# hour angle in decimal hours, [0 - 24] hours
+# declination in decimal degrees, [-90 - +90] degrees
 equatorialToHorizon <- function(hourAngle, dec, obs_lat)
 {
-  sinH <- sin(hourAngle)
-  cosH <- cos(hourAngle)
-  cosLat <- cos(obs_lat)
-  sinLat <- sin(obs_lat)
-  cosDec <- cos(dec)
-  sinDec <- sin(dec)
-  tanDec <- tan(dec)
+  cosH <- cos(hourAngle*15*DEG2RAD)
+  cosLat <- cos(obs_lat*DEG2RAD)
+  sinLat <- sin(obs_lat*DEG2RAD)
+  cosDec <- cos(dec*DEG2RAD)
+  sinDec <- sin(dec*DEG2RAD)
+
+  sinAlt <- sinDec * sinLat + cosDec * cosLat * cosH
+  h <- asin(sinAlt) * RAD2DEG
   
-  azimuth <- atan2(-sinH, -sinLat * cosH + cosLat * tanDec)
-  altitude <- arcsin(cosLat * cosDec * cosH + sinLat * sinDec)
+  cosAz <- (sinDec - sinLat * sinAlt) / (cosLat * cos(h*DEG2RAD))
+  az <- acos(cosAz) * RAD2DEG
   
-  z <- c(azimuth, altitude)
+  sinH <- sin(hourAngle*15*DEG2RAD)
+  
+  if (sinH > 0) {
+    az <- 360 - az
+  }
+  
+  z <- c(az, h)
   names(z) <- c("Azimuth", "Altitude")
   
   return (z)
 }
 
-# Convert horizon coordinates (azimuth, altitude) in radians to
-# equatorial coordinates (hour angle, declination) in radians.
+# Convert horizon coordinates to equatorial coordinates
+# azimuth in decimal degrees, [0 - 360] degrees
+# altitude in decimal degrees, [-90 - +90] degrees
+# hour angle in decimal hours, [0 - 24] hours
+# declination in decimal degrees, [-90 - +90] degrees
 horizonToEquatorial <- function(azimuth, altitude, obs_lat)
 {
-  sinAlt <- sin(altitude)
-  cosAlt <- cos(altitude)
-  tanAlt <- tan(altitude)
-  sinAz <- sin(azimuth)
-  cosAz <- cos(azimuth)
-  sinLat <- sin(obs_lat)
-  cosLat <- cos(obs_lat)
+  sinAlt <- sin(altitude*DEG2RAD)
+  cosAlt <- cos(altitude*DEG2RAD)
+  cosAz <- cos(azimuth*DEG2RAD)
+  sinLat <- sin(obs_lat*DEG2RAD)
+  cosLat <- cos(obs_lat*DEG2RAD)
   
-  hourAngle <- atan2(-sinAz, -cosAz * sinLat + tanAlt * sinLat)
-  dec <- arcsin(cosAlt * cosAz * cosLat + sinAlt * sinLat)
-  
-  z <- c(hourAngle, dec)
-  names(z) <- c("Hour Angle", "DEC")
+ sinDec <- sinAlt * sinLat + cosAlt * cosLat * cosAz
+ dec <- asin(sinDec) * RAD2DEG
+ 
+ numerator <- sinAlt - sinLat * sinDec
+ cosH <- numerator / (cosLat * cos(dec*DEG2RAD))
+ H <- acos(cosH) * RAD2DEG
+ 
+ # Convert the hour angle from a range of [0 - 180] degrees to a range of
+ # [0 - 360] degrees or [0 - 24] hours
+ sinAz <- sin(azimuth*DEG2RAD)
+ if (sinAz > 0) {
+   H <- 360 - H
+ }
+ 
+ # Convert hour angle in degrees to hours
+ H <- H /15
+ 
+ z <- c(H, dec)
+ names(z) <- c("Hour Angle", "Declination")
   
   return(z)
 }
