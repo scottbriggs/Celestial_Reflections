@@ -1,0 +1,114 @@
+---
+title: "Test Date Functions"
+output: html_notebook
+---
+
+```{r}
+library(here)
+source(here("src", "R", "scripts.R"))
+options(digits=10)
+```
+
+# Test Julian Day Number function
+# Julian Day Numbers begin at 12 noon
+```{r}
+print("Julian Day Number for January 27.5, 333 is")
+jd <- julianDayNumber(333, 1, 27.5)
+format(jd, big.mark = ",", scientific = FALSE)
+```
+
+```{r}
+print("Julian Day Number for October 4.81, 1957 is")
+jd <- julianDayNumber(1957, 10, 4.81)
+format(jd, big.mark = ",", scientific = FALSE)
+```
+```{r}
+print("Julian Day Number for January 1.5, 2000 is")
+jd <- julianDayNumber(2000, 1, 1.5)
+format(jd, big.mark = ",", scientific = FALSE)
+```
+
+```{r}
+print("Julian Day Number for January 27, 1987 is")
+jd <- julianDayNumber(1987, 1, 27)
+format(jd, big.mark = ",", scientific = FALSE)
+```
+
+```{r}
+print("Julian Day Number for June 19.5, 1987 is")
+jd <- julianDayNumber(1987, 6, 19.5)
+format(jd, big.mark = ",", scientific = FALSE)
+```
+
+```{r}
+print("Julian Day Number for January 27, 1988 is")
+jd <- julianDayNumber(1988, 1, 27)
+format(jd, big.mark = ",", scientific = FALSE)
+```
+
+```{r}
+print("Julian Day Number for June 19.5, 1988 is")
+jd <- julianDayNumber(1988, 6, 19.5)
+format(jd, big.mark = ",", scientific = FALSE)
+```
+
+```{r}
+print("Julian Day Number for January 1, 1900 is")
+jd <- julianDayNumber(1900, 1, 1)
+format(jd, big.mark = ",", scientific = FALSE)
+```
+
+```{r}
+print("Julian Day Number for January 1, 1600 is")
+jd <- julianDayNumber(1600, 1, 1)
+format(jd, big.mark = ",", scientific = FALSE)
+```
+
+```{r}
+print("Julian Day Number for December 31, 1600 is")
+jd <- julianDayNumber(1600, 12, 31)
+format(jd, big.mark = ",", scientific = FALSE)
+```
+
+```{r}
+print("Julian Day Number for April 10.3, 837 is")
+jd <- julianDayNumber(837, 4, 10.3)
+format(jd, big.mark = ",", scientific = FALSE)
+```
+
+```{r}
+print("Julian Day Number for July 12.5, -1000 is")
+jd <- julianDayNumber(-1000, 7, 12.5)
+format(jd, big.mark = ",", scientific = FALSE)
+```
+
+```{r}
+print("Julian Day Number for February 29, -1000 is")
+jd <- julianDayNumber(-1000, 2, 29)
+format(jd, big.mark = ",", scientific = FALSE)
+```
+
+```{r}
+print("Julian Day Number for August 17.9, -1001 is")
+jd <- julianDayNumber(-1001, 8, 17.9)
+format(jd, big.mark = ",", scientific = FALSE)
+```
+
+```{r}
+print("Julian Day Number for January 1.5, -4712 is")
+jd <- julianDayNumber(-4712, 1, 1.5)
+format(jd, big.mark = ",", scientific = FALSE)
+```
+
+```{r}
+print("Julian Day Number for August 15, -13200 is")
+jd <- julianDayNumber(-13200, 8, 15)
+format(jd, big.mark = ",", scientific = FALSE)
+```
+
+```{r}
+print("Julian Day Number for March 15, 17191 is")
+jd <- julianDayNumber(17191, 3, 15)
+format(jd, big.mark = ",", scientific = FALSE)
+```
+

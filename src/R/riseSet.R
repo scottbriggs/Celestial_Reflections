@@ -6,9 +6,7 @@
 # deltaT is the different in seconds between universal time and dynamical time
 # obslat is the observer latitude in degrees, +N, -S
 # obslong is the observer longitude in degrees, +E, - W
-# event is the event of interest - sun, moon, or planet/star
-# func1 is a function passed in for planets or stars
-riseSetEvent <- function(jd_ut, deltaT, obsLat, obsLong, event, func1)
+riseSetVenus <- function(jd_ut, deltaT, obsLat, obsLong)
 {
   # Initialization
   std_alt <- 0
@@ -17,7 +15,7 @@ riseSetEvent <- function(jd_ut, deltaT, obsLat, obsLong, event, func1)
   culminationFlag <- FALSE
   riseString <- ""
   setString <- ""
-
+  
   latRad <- obsLat * DEG2RAD
   sinLat <- sin(latRad)
   cosLat <- cos(latRad)
@@ -36,77 +34,26 @@ riseSetEvent <- function(jd_ut, deltaT, obsLat, obsLong, event, func1)
   # Calculate the Greenwich Mean and Apparent Sidereal Time
   sid_time <- siderealTime(jd_ut, deltaT)
   
-  if (event == "Sun") {
-    
-    # standard altitude for the sun
-    std_alt <- -50/60*DEG2RAD
-    
-    # apparent place of the sun on day-1
-    pos <- apparentPlaceSun(jd_ut -1)
-    polar <- rectToPolar(pos)
-    ra1 <- polar[2]
-    dec1 <- polar[3]
-    
-    # apparent place of the sun on day
-    pos <- apparentPlaceSun(jd_ut)
-    polar <- rectToPolar(pos)
-    ra2 <- polar[2]
-    dec2 <- polar[3]
-    
-    # apparent place of the sun on day+1
-    pos <- apparentPlaceSun(jd_ut +1)
-    polar <- rectToPolar(pos)
-    ra3 <- polar[2]
-    dec3 <- polar[3]
-    
-  } else if (event == "Moon") {
-    
-    # apparent place of the moon on day-1
-    pos <- apparentPlaceMoon(jd_ut -1)
-    polar <- rectToPolar(pos)
-    ra1 <- polar[2]
-    dec1 <- polar[3]
-    
-    # apparent place of the moon on day
-    pos <- apparentPlaceMoon(jd_ut)
-    polar <- rectToPolar(pos)
-    ra2 <- polar[2]
-    dec2 <- polar[3]
-    
-    # standard altitude for the moon
-    std_alt = -34/60*DEG2RAD - pos[["Semi-Diameter"]][1] + 
-      pos[["Horizontal Parallax"]][1]
-    
-    # apparent place of the Moon on day+1
-    pos <- apparentPlaceMoon(jd_ut +1)
-    polar <- rectToPolar(pos)
-    ra3 <- polar[2]
-    dec3 <- polar[3]
-    
-  } else {
-    
-    # Planets and stars
-    # Standard Altitude
-    std_alt <- -34/60*DEG2RAD
-    
-    # apparent place of the planet on day-1
-    pos <- func1(jd_ut - 1)
-    polar <- rectToPolar(pos)
-    ra1 <- polar[2]
-    dec1 <- polar[3]
-    
-    # apparent place of the planet on day
-    pos <- func1(jd_ut)
-    polar <- rectToPolar(pos)
-    ra2 <- polar[2]
-    dec2 <- polar[3]
-    
-    # apparent place of the planet on day+1
-    pos <- func1(jd_ut + 1)
-    polar <- rectToPolar(pos)
-    ra3 <- polar[2]
-    dec3 <- polar[3]
-  }
+  # Standard Altitude
+  std_alt <- -34/60*DEG2RAD
+  
+  # apparent place of the planet on day-1
+  pos <- apparentPlaceVenus(jd_td - 1)
+  polar <- rectToPolar(pos)
+  ra1 <- polar[2]
+  dec1 <- polar[3]
+  
+  # apparent place of the planet on day
+  pos <- apparentPlaceVenus(jd_td)
+  polar <- rectToPolar(pos)
+  ra2 <- polar[2]
+  dec2 <- polar[3]
+  
+  # apparent place of the planet on day+1
+  pos <- apparentPlaceVenus(jd_td + 1)
+  polar <- rectToPolar(pos)
+  ra3 <- polar[2]
+  dec3 <- polar[3]
   
   # Check RA values on 24 hour boundary
   if ((ra2 < ra1) & (ra3 > ra2)){
@@ -142,9 +89,7 @@ riseSetEvent <- function(jd_ut, deltaT, obsLat, obsLong, event, func1)
   H0 <- acos(cosH0) * RAD2DEG
   H0 <- amodulo(H0, 180)
   
-  m0 <- (ra2 * RAD2DEG + obsLong - sid_time[2] * RAD2DEG) / 360
-  m1 <- m0 - (H0 / 360)
-  m2 <- m0 + (H0 / 360)
+  m0 <- (ra2 * RAD2DEG + obsLong - sid_time[["GAST"]][1] * RAD2DEG) / 360
   
   if (m0 < 0) {
     m0 <- m0 + 1
@@ -152,11 +97,15 @@ riseSetEvent <- function(jd_ut, deltaT, obsLat, obsLong, event, func1)
     m0 <- m0 - 1
   }
   
+  m1 <- m0 - (H0 / 360)
+  
   if (m1 < 0) {
     m1 <- m1 + 1
   } else if (m1 > 1) {
     m1 <- m1 - 1
   }
+  
+  m2 <- m0 + (H0 / 360)
   
   if (m2 < 0) {
     m2 <- m2 + 1
@@ -164,9 +113,20 @@ riseSetEvent <- function(jd_ut, deltaT, obsLat, obsLong, event, func1)
     m2 <- m2 - 1
   }
   
-  thetaM0 <- sid_time[2] * RAD2DEG + 360.985647 * m0
-  thetaM1 <- sid_time[2] * RAD2DEG + 360.985647 * m1
-  thetaM2 <- sid_time[2] * RAD2DEG + 360.985647 * m2
+  thetaM0 <- sid_time[["GAST"]][1] * RAD2DEG + 360.985647 * m0
+  if (thetaM0 > 360){
+    thetaM0 <- thetaM0 - 360
+  }
+  
+  thetaM1 <- sid_time[["GAST"]][1] * RAD2DEG + 360.985647 * m1
+  if (thetaM1 > 360){
+    thetaM1 <- thetaM1 - 360
+  }
+  
+  thetaM2 <- sid_time[["GAST"]][1] * RAD2DEG + 360.985647 * m2
+  if (thetaM2 > 360){
+    thetaM2 <- thetaM2 - 360
+  }
   
   nM0 <- m0 + deltaT/86400
   nM1 <- m1 + deltaT/86400
@@ -178,8 +138,35 @@ riseSetEvent <- function(jd_ut, deltaT, obsLat, obsLong, event, func1)
   decM1 <- interpolate(c(dec1, dec2, dec3), nM1)
   decM2 <- interpolate(c(dec1, dec2, dec3), nM2)
   
+  lhaM0 <- thetaM0 - obsLong - raM0 * RAD2DEG
+  if (lhaM0 < -180) {
+    lhaM0 <- lhaM0 + 180
+  } else if (lhaM0 > 180) {
+    lhaM0 <- lhaM0 - 180
+  }
   
+  lhaM1 <- thetaM1 - obsLong - raM1 * RAD2DEG
+  lhaM2 <- thetaM2 - obsLong - raM2 * RAD2DEG
   
+  sinHM1 <- sinLat * sin(decM1) + cosLat * cos(decM1) * cos(lhaM1*DEG2RAD)
+  hM1 <- asin(sinHM1)
+  
+  sinHM2 <- sinLat * sin(decM2) + cosLat * cos(decM2) * cos(lhaM2*DEG2RAD)
+  hM2 <- asin(sinHM2)
+  
+  deltaM0 <- -lhaM0 / 360
+  
+  deltaM1 <- ((hM1 - std_alt) * RAD2DEG) / 
+    (360 * cos(decM1) * cosLat * sin(lhaM1 * DEG2RAD))
+  
+  deltaM2 <- ((hM2 - std_alt) * RAD2DEG) / 
+    (360 * cos(decM2) * cosLat * sin(lhaM2 * DEG2RAD))
+  
+  m0 <- m0 + deltaM0
+  m1 <- m1 + deltaM1
+  m2 <- m2 + deltaM2
+  
+  z <- c(m0, m1, m2)
 }
 
 # Function to calculate roots of a quadratic function based on three

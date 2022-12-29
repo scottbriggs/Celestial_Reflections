@@ -76,6 +76,14 @@ hourToHM <- function(decHr)
   hr <- as.integer(x)
   x <- (x - hr) * 60
   min <- as.integer(x)
+  x <- (x - min) * 60
+  if (x >= 30) {
+    min <- min + 1
+    if (min == 60) {
+      hr <- hr + 1
+      min = 0
+    }
+  }
   
   hm <- c(hr, min)
   
@@ -206,4 +214,15 @@ siderealTime <- function(jd_ut, deltaT)
   names(z) <- c("GMST", "GAST")
   
   return (z)
+}
+
+# Julian day number corrected for local civil time including
+# daylight savings time and time zone
+# year, month, and day of interest
+# dst - daylight savings time, 1 for dst, otherwise 0
+# tz - time zone correction, negative if time zone is west of Greenwich,
+# positive if east of Greenwich
+timeZoneCorrection <- function(year, month, day, dst, tz)
+{
+  
 }
