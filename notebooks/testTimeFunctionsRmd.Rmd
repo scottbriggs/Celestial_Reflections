@@ -1,0 +1,44 @@
+---
+title: "Test Time Functions"
+output: html_notebook
+---
+
+```{r}
+library(here)
+library(arrow)
+source(here("src", "R", "scripts.R"))
+options(digits=10)
+```
+
+# Calculate the mean and apparent sidereal time at Greenwich on 1987 April 10
+# at 0 hours universal time
+```{r}
+year <- 1987
+month <- 4
+day <- 10
+jd <- julianDayNumber(year, month, day)
+dt <- deltaT(year, month)
+st <- siderealTime(jd, dt)
+print("Greenwich Mean Sidereal Time (GMST) = ")
+gmst <- hourToHMS(st[["GMST"]][1]*RAD2HR)
+hmsString(gmst)
+print("Greenwich Apparent Sidereal Time (GAST) = ")
+gast <- hourToHMS(st[["GAST"]][1]*RAD2HR)
+hmsString(gast)
+```
+# Find the mean and apparent sidereal time at Greenwich on 1987 April 10 at
+# 19 hours 21 minutes and 0 seconds universal time
+```{r}
+hms <- c(19, 21, 0)
+hour <- hmsToHour(hms)
+jd <- julianDayNumber(1987, 4, (10+hour/24))
+dt <- deltaT(year, month)
+st <- siderealTime(jd, dt)
+print("Greenwich Mean Sidereal Time (GMST) = ")
+gmst <- hourToHMS(st[["GMST"]][1]*RAD2HR)
+hmsString(gmst)
+print("Greenwich Apparent Sidereal Time (GAST) = ")
+gast <- hourToHMS(st[["GAST"]][1]*RAD2HR)
+hmsString(gast)
+```
+

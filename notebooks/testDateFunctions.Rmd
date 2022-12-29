@@ -9,7 +9,7 @@ source(here("src", "R", "scripts.R"))
 options(digits=10)
 ```
 
-# Test Julian Day Number function
+# Calculate Julian Day Number function
 # Julian Day Numbers begin at 12 noon
 ```{r}
 print("Julian Day Number for January 27.5, 333 is")
