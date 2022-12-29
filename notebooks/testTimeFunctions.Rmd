@@ -43,3 +43,6 @@ gast <- hourToHMS(st[["GAST"]][1]*RAD2HR)
 hmsString(gast)
 ```
 
+```{r}
+
+```

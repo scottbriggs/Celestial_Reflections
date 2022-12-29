@@ -49,9 +49,9 @@ nutationAngles <- function(jd)
     nut_ang[1,2] <- nut_ang[1,2] + (chebyshev_nut[v,1] * df_nutation[1,v+DE441NUMCOEFFNUTATION])
   }
   
-  colnames(nut_ang) <- c('Nut_Long', 'Nut_Oblq')
+  z <- c(nut_ang[1], nut_ang[2])
 
-  return(nut_ang)
+  return(z)
 }
 
 # Create the nutation matrix

@@ -31,7 +31,6 @@ rectToPolar <- function(pos){
   }
   
   z <- c(m_r, m_phi, m_theta)
-  names(z) <- c("Norm", "Polar_Long", "Polar_Lat")
   
   return (z)
 }
