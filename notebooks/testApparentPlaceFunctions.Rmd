@@ -1,0 +1,81 @@
+---
+title: "Test Apparent Place Functions"
+output: html_notebook
+---
+
+# Test apparent place functions for solar system bodies
+
+```{r}
+library(here)
+library(arrow)
+source(here("src", "R", "scripts.R"))
+```
+
+# Apparent place Mercury
+```{r}
+year <- 2001
+month <- 5
+day <- 1
+jd <- julianDayNumber(year, month, day)
+ap <- apparentPlaceMercury(jd)
+polar <- rectToPolar(ap[[1]][[1]], ap[[1]][[2]], ap[[1]][[3]])
+print("Right Ascension")
+hmsString(hourToHMS(polar[3]*RAD2HR))
+print("Declination")
+dmsString(degToDMS(polar[2]*RAD2DEG))
+print("True Geometric Distance in AU")
+polar[1]
+```
+
+
+# Apparent place Venus
+```{r}
+year <- 2001
+month <- 5
+day <- 1
+jd <- julianDayNumber(year, month, day)
+ap <- apparentPlaceVenus(jd)
+polar <- rectToPolar(ap[[1]][[1]], ap[[1]][[2]], ap[[1]][[3]])
+print("Right Ascension")
+hmsString(hourToHMS(polar[3]*RAD2HR))
+print("Declination")
+dmsString(degToDMS(polar[2]*RAD2DEG))
+print("True Geometric Distance in AU")
+polar[1]
+```
+
+
+# Apparent place Mars
+```{r}
+year <- 2001
+month <- 5
+day <- 1
+jd <- julianDayNumber(year, month, day)
+ap <- apparentPlaceMars(jd)
+polar <- rectToPolar(ap[[1]][[1]], ap[[1]][[2]], ap[[1]][[3]])
+print("Right Ascension")
+hmsString(hourToHMS(polar[3]*RAD2HR))
+print("Declination")
+dmsString(degToDMS(polar[2]*RAD2DEG))
+print("True Geometric Distance in AU")
+polar[1]
+```
+
+
+# Apparent place Sun
+```{r}
+year <- 2001
+month <- 5
+day <- 1
+jd <- julianDayNumber(year, month, day)
+ap <- apparentPlaceSun(jd)
+polar <- rectToPolar(ap[[1]][[1]], ap[[1]][[2]], ap[[1]][[3]])
+print("Right Ascension")
+hmsString(hourToHMS(polar[3]*RAD2HR))
+print("Declination")
+dmsString(degToDMS(polar[2]*RAD2DEG))
+print("True Geometric Distance in AU")
+polar[1]
+```
+
+

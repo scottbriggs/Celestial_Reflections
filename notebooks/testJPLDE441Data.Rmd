@@ -1,0 +1,247 @@
+---
+title: "Test JPL DE441 Data"
+output: html_notebook
+---
+
+```{r}
+library(here)
+library(arrow)
+source(here("src", "R", "scripts.R"))
+options(digits = 12)
+```
+
+# Test the JPL DE441 data extracted from the ASCII files
+
+# Position and velocity vectors of Mercury on December 15, 2019. The reference 
+# frame for the position and velocity vectors is equatorial. Convert the vectors
+# to right ascension and declination.
+```{r}
+year <- 2019
+month <- 12
+day <- 15
+jd <- julianDayNumber(year, month, day)
+pos <- positionMercurySSB(jd)
+pos["Position Vector"]
+pos["Velocity Vector"]
+raDec <- rectToPolar(pos["Position Vector"])
+print("Right Ascension")
+hmsString(hourToHMS(raDec[3]))
+print("Declination")
+dmsString(degToDMS(raDec[2]))
+```
+
+# Position and velocity vectors of Venus on December 15, 2019. The reference 
+# frame for the position and velocity vectors is equatorial. Convert the vectors
+# to right ascension and declination.
+```{r}
+year <- 2019
+month <- 12
+day <- 15
+jd <- julianDayNumber(year, month, day)
+pos <- positionVenusSSB(jd)
+pos["Position Vector"]
+pos["Velocity Vector"]
+raDec <- rectToPolar(pos["Position Vector"])
+print("Right Ascension")
+hmsString(hourToHMS(raDec[3]))
+print("Declination")
+dmsString(degToDMS(raDec[2]))
+```
+
+# Position and velocity vectors of the Earth-Moon Barycenter on December 15, 2019.
+# The reference frame for the position and velocity vectors is equatorial. Convert
+# the vectors to right ascension and declination.
+```{r}
+year <- 2019
+month <- 12
+day <- 15
+jd <- julianDayNumber(year, month, day)
+pos <- positionEMBSSB(jd)
+pos["Position Vector"]
+pos["Velocity Vector"]
+raDec <- rectToPolar(pos["Position Vector"])
+print("Right Ascension")
+hmsString(hourToHMS(raDec[3]))
+print("Declination")
+dmsString(degToDMS(raDec[2]))
+```
+
+# Position and velocity vectors of Earth on December 15, 2019. The reference 
+# frame for the position and velocity vectors is equatorial. Convert the vectors
+# to right ascension and declination.
+```{r}
+year <- 2019
+month <- 12
+day <- 15
+jd <- julianDayNumber(year, month, day)
+pos <- positionEarthSSB(jd)
+pos["Position Vector"]
+pos["Velocity Vector"]
+raDec <- rectToPolar(pos["Position Vector"])
+print("Right Ascension")
+hmsString(hourToHMS(raDec[3]))
+print("Declination")
+dmsString(degToDMS(raDec[2]))
+```
+
+# Position and velocity vectors of Mars on December 15, 2019. The reference 
+# frame for the position and velocity vectors is equatorial. Convert the vectors
+# to right ascension and declination.
+```{r}
+year <- 2019
+month <- 12
+day <- 15
+jd <- julianDayNumber(year, month, day)
+pos <- positionMarsSSB(jd)
+pos["Position Vector"]
+pos["Velocity Vector"]
+raDec <- rectToPolar(pos["Position Vector"])
+print("Right Ascension")
+hmsString(hourToHMS(raDec[3]))
+print("Declination")
+dmsString(degToDMS(raDec[2]))
+```
+
+
+# Position and velocity vectors of Jupiter on December 15, 2019. The reference 
+# frame for the position and velocity vectors is equatorial. Convert the vectors
+# to right ascension and declination.
+```{r}
+year <- 2019
+month <- 12
+day <- 15
+jd <- julianDayNumber(year, month, day)
+pos <- positionJupiterSSB(jd)
+pos["Position Vector"]
+pos["Velocity Vector"]
+raDec <- rectToPolar(pos["Position Vector"])
+print("Right Ascension")
+hmsString(hourToHMS(raDec[3]))
+print("Declination")
+dmsString(degToDMS(raDec[2]))
+```
+
+# Position and velocity vectors of Saturn on December 15, 2019. The reference 
+# frame for the position and velocity vectors is equatorial. Convert the vectors
+# to right ascension and declination.
+```{r}
+year <- 2019
+month <- 12
+day <- 15
+jd <- julianDayNumber(year, month, day)
+pos <- positionSaturnSSB(jd)
+pos["Position Vector"]
+pos["Velocity Vector"]
+raDec <- rectToPolar(pos["Position Vector"])
+print("Right Ascension")
+hmsString(hourToHMS(raDec[3]))
+print("Declination")
+dmsString(degToDMS(raDec[2]))
+```
+
+# Position and velocity vectors of Uranus on December 15, 2019. The reference 
+# frame for the position and velocity vectors is equatorial. Convert the vectors
+# to right ascension and declination.
+```{r}
+year <- 2019
+month <- 12
+day <- 15
+jd <- julianDayNumber(year, month, day)
+pos <- positionUranusSSB(jd)
+pos["Position Vector"]
+pos["Velocity Vector"]
+raDec <- rectToPolar(pos["Position Vector"])
+print("Right Ascension")
+hmsString(hourToHMS(raDec[3]))
+print("Declination")
+dmsString(degToDMS(raDec[2]))
+```
+
+# Position and velocity vectors of Neptune on December 15, 2019. The reference 
+# frame for the position and velocity vectors is equatorial. Convert the vectors
+# to right ascension and declination.
+```{r}
+year <- 2019
+month <- 12
+day <- 15
+jd <- julianDayNumber(year, month, day)
+pos <- positionNeptuneSSB(jd)
+pos["Position Vector"]
+pos["Velocity Vector"]
+raDec <- rectToPolar(pos["Position Vector"])
+print("Right Ascension")
+hmsString(hourToHMS(raDec[3]))
+print("Declination")
+dmsString(degToDMS(raDec[2]))
+```
+
+# Position and velocity vectors of Pluto on December 15, 2019. The reference 
+# frame for the position and velocity vectors is equatorial. Convert the vectors
+# to right ascension and declination.
+```{r}
+year <- 2019
+month <- 12
+day <- 15
+jd <- julianDayNumber(year, month, day)
+pos <- positionPlutoSSB(jd)
+pos["Position Vector"]
+pos["Velocity Vector"]
+raDec <- rectToPolar(pos["Position Vector"])
+print("Right Ascension")
+hmsString(hourToHMS(raDec[3]))
+print("Declination")
+dmsString(degToDMS(raDec[2]))
+```
+
+# Position and velocity vectors of Moon on December 15, 2019. The reference 
+# frame for the position and velocity vectors is equatorial. Convert the vectors
+# to right ascension and declination.
+```{r}
+year <- 2019
+month <- 12
+day <- 15
+jd <- julianDayNumber(year, month, day)
+pos <- positionMoonGEO(jd)
+pos["Position Vector"]
+pos["Velocity Vector"]
+raDec <- rectToPolar(pos["Position Vector"])
+print("Right Ascension")
+hmsString(hourToHMS(raDec[3]))
+print("Declination")
+dmsString(degToDMS(raDec[2]))
+```
+
+# Position and velocity vectors of Sun on December 15, 2019. The reference 
+# frame for the position and velocity vectors is equatorial. Convert the vectors
+# to right ascension and declination.
+```{r}
+year <- 2019
+month <- 12
+day <- 15
+jd <- julianDayNumber(year, month, day)
+pos <- positionSunSSB(jd)
+pos["Position Vector"]
+pos["Velocity Vector"]
+raDec <- rectToPolar(pos["Position Vector"])
+print("Right Ascension")
+hmsString(hourToHMS(raDec[3]))
+print("Declination")
+dmsString(degToDMS(raDec[2]))
+```
+
+# Nutation angles (nutation in longitude and nutation in obliquity)
+# on December 15, 2019.
+```{r}
+year <- 2019
+month <- 12
+day <- 15
+jd <- julianDayNumber(year, month, day)
+nutAngles <- nutationAngles(jd)
+print("Nutation in Longitude")
+nutAngles[1]
+dmsString(degToDMS(nutAngles[[1]][1]))
+print("Nutation in Obliquity")
+nutAngles[2]
+dmsString(degToDMS(nutAngles[[2]][1]))
+```
+
