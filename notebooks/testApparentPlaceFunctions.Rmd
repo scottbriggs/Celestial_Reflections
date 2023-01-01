@@ -19,6 +19,7 @@ day <- 1
 jd <- julianDayNumber(year, month, day)
 ap <- apparentPlaceMercury(jd)
 polar <- rectToPolar(ap[[1]][[1]], ap[[1]][[2]], ap[[1]][[3]])
+print("Apparent Place Mercury")
 print("Right Ascension")
 hmsString(hourToHMS(polar[3]*RAD2HR))
 print("Declination")
@@ -36,6 +37,7 @@ day <- 1
 jd <- julianDayNumber(year, month, day)
 ap <- apparentPlaceVenus(jd)
 polar <- rectToPolar(ap[[1]][[1]], ap[[1]][[2]], ap[[1]][[3]])
+print("Apparent Place Venus")
 print("Right Ascension")
 hmsString(hourToHMS(polar[3]*RAD2HR))
 print("Declination")
@@ -53,12 +55,124 @@ day <- 1
 jd <- julianDayNumber(year, month, day)
 ap <- apparentPlaceMars(jd)
 polar <- rectToPolar(ap[[1]][[1]], ap[[1]][[2]], ap[[1]][[3]])
+print("Apparent Place Mars")
 print("Right Ascension")
 hmsString(hourToHMS(polar[3]*RAD2HR))
 print("Declination")
 dmsString(degToDMS(polar[2]*RAD2DEG))
 print("True Geometric Distance in AU")
 polar[1]
+```
+
+# Apparent place Jupiter
+```{r}
+year <- 2001
+month <- 5
+day <- 1
+jd <- julianDayNumber(year, month, day)
+ap <- apparentPlaceJupiter(jd)
+polar <- rectToPolar(ap[[1]][[1]], ap[[1]][[2]], ap[[1]][[3]])
+print("Apparent Place Jupiter")
+print("Right Ascension")
+hmsString(hourToHMS(polar[3]*RAD2HR))
+print("Declination")
+dmsString(degToDMS(polar[2]*RAD2DEG))
+print("True Geometric Distance in AU")
+polar[1]
+```
+
+
+# Apparent place Saturn
+```{r}
+year <- 2001
+month <- 5
+day <- 1
+jd <- julianDayNumber(year, month, day)
+ap <- apparentPlaceSaturn(jd)
+polar <- rectToPolar(ap[[1]][[1]], ap[[1]][[2]], ap[[1]][[3]])
+print("Apparent Place Saturn")
+print("Right Ascension")
+hmsString(hourToHMS(polar[3]*RAD2HR))
+print("Declination")
+dmsString(degToDMS(polar[2]*RAD2DEG))
+print("True Geometric Distance in AU")
+polar[1]
+```
+
+
+# Apparent place Uranus
+```{r}
+year <- 2001
+month <- 5
+day <- 1
+jd <- julianDayNumber(year, month, day)
+ap <- apparentPlaceUranus(jd)
+polar <- rectToPolar(ap[[1]][[1]], ap[[1]][[2]], ap[[1]][[3]])
+print("Apparent Place Uranus")
+print("Right Ascension")
+hmsString(hourToHMS(polar[3]*RAD2HR))
+print("Declination")
+dmsString(degToDMS(polar[2]*RAD2DEG))
+print("True Geometric Distance in AU")
+polar[1]
+```
+
+
+# Apparent place Neptune
+```{r}
+year <- 2001
+month <- 5
+day <- 1
+jd <- julianDayNumber(year, month, day)
+ap <- apparentPlaceNeptune(jd)
+polar <- rectToPolar(ap[[1]][[1]], ap[[1]][[2]], ap[[1]][[3]])
+print("Apparent Place Neptune")
+print("Right Ascension")
+hmsString(hourToHMS(polar[3]*RAD2HR))
+print("Declination")
+dmsString(degToDMS(polar[2]*RAD2DEG))
+print("True Geometric Distance in AU")
+polar[1]
+```
+
+
+# Apparent place Pluto
+```{r}
+year <- 2001
+month <- 5
+day <- 1
+jd <- julianDayNumber(year, month, day)
+ap <- apparentPlacePluto(jd)
+polar <- rectToPolar(ap[[1]][[1]], ap[[1]][[2]], ap[[1]][[3]])
+print("Apparent Place Pluto")
+print("Right Ascension")
+hmsString(hourToHMS(polar[3]*RAD2HR))
+print("Declination")
+dmsString(degToDMS(polar[2]*RAD2DEG))
+print("True Geometric Distance in AU")
+polar[1]
+```
+
+
+# Apparent place Moon
+```{r}
+year <- 2001
+month <- 5
+day <- 1
+jd <- julianDayNumber(year, month, day)
+ap <- apparentPlaceMoon(jd)
+polar <- rectToPolar(ap[[1]][[1]], ap[[1]][[2]], ap[[1]][[3]])
+print("Apparent Place Moon")
+print("Right Ascension")
+hmsString(hourToHMS(polar[3]*RAD2HR))
+print("Declination")
+dmsString(degToDMS(polar[2]*RAD2DEG))
+print("True Geometric Distance in AU")
+ap[[2]][[1]]
+print("Horizontal Parallax")
+dmsString(degToDMS(ap[[3]][[1]]*RAD2DEG))
+print("Semi-Diameter")
+dmsString(degToDMS(ap[[4]][[1]]*RAD2DEG))
 ```
 
 
@@ -70,6 +184,7 @@ day <- 1
 jd <- julianDayNumber(year, month, day)
 ap <- apparentPlaceSun(jd)
 polar <- rectToPolar(ap[[1]][[1]], ap[[1]][[2]], ap[[1]][[3]])
+print("Apparent Place Sun")
 print("Right Ascension")
 hmsString(hourToHMS(polar[3]*RAD2HR))
 print("Declination")
