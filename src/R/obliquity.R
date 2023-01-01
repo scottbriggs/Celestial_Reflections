@@ -24,7 +24,7 @@ obliquity <- function(jd, nut_angles)
       term10 + U * term11)))))))))
   
   mean_obliquity <- mean_obliquity * DEG2RAD
-  true_obliquity <- mean_obliquity + nut_angles[[2]]
+  true_obliquity <- mean_obliquity + nut_angles[[2]][[1]]
   
   obliq <- c(mean_obliquity, true_obliquity)
   names(obliq) <- c("Mean_Obliquity", "True_Obliquity")

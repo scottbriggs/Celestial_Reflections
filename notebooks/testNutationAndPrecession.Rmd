@@ -1,0 +1,41 @@
+---
+title: "Test Nutation and Precession Functions"
+output: html_notebook
+---
+
+```{r}
+library(here)
+library(arrow)
+source(here("src", "R", "scripts.R"))
+```
+
+
+```{r}
+year <- 2001
+month <- 5
+day <- 1
+jd <- julianDayNumber(year, month, day)
+nut_ang <- nutationAngles(jd)
+print("Nutation in Longitude")
+dmsString(degToDMS(nut_ang[[1]][[1]] * RAD2DEG))
+print("Nutation in Obliquity")
+dmsString(degToDMS(nut_ang[[2]][[1]] * RAD2DEG))
+print("Mean Obliquity of the Ecliptic")
+ob <- obliquity(jd, nut_ang)
+dmsString(degToDMS(ob[[1]][[1]] * RAD2DEG))
+print("Apparent Obliquity of the Ecliptic")
+dmsString(degToDMS(ob[[2]][[1]] * RAD2DEG))
+print("Nutation Matrix")
+nutation_matrix(jd)
+```
+
+```{r}
+year <- 2001
+month <- 5
+day <- 1
+jd <- julianDayNumber(year, month, day)
+print("Precession Matrix")
+precessionMatrix(jd)
+```
+
+

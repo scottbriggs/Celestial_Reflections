@@ -193,4 +193,3 @@ print("True Geometric Distance in AU")
 polar[1]
 ```
 
-
