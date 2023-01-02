@@ -1,0 +1,78 @@
+---
+title: "Test Coordinate Transforms"
+output: html_notebook
+---
+
+
+```{r}
+library(here)
+library(arrow)
+source(here("src", "R", "scripts.R"))
+```
+
+
+# Convert horizon coordinates to equatorial coordinates
+# Altitude, azimuth, and latitude all in degrees
+```{r}
+altitude <- 40
+azimuth <- 115
+latitude <- 38
+coord <- horizonToEquatorial(azimuth, altitude, latitude)
+print("Hour Angle")
+hmsString(hourToHMS(coord[[1]][[1]]))
+print("Declination")
+dmsString(degToDMS(coord[[2]][[1]]))
+```
+
+
+# Convert equatorial coordinates to horizon coordinates
+# Declination in degrees, arcminutes, and arcseconds
+# Hour Angle in hours, minutes, and seconds
+# Latitude in degrees
+```{r}
+dec <- dmsToDeg(c(0,-30,30))
+hrAng <- hmsToHour(c(16, 29, 45))
+latitude <- 25
+coord <- equatorialToHorizon(hrAng, dec, latitude)
+print("Azimuth")
+dmsString(degToDMS(coord[[1]][[1]]))
+print("Altitude")
+dmsString(degToDMS(coord[[2]][[1]]))
+```
+
+
+# Convert equatorial coordinates to ecliptic coordinates
+# Right ascension in hours, minutes, and seconds
+# Declination in degrees, arcminutes, and arcseconds
+# Obliquity - Standard Epoch J2000
+```{r}
+ra <- hmsToHour(c(12, 18, 47.5))
+dec <- dmsToDeg(c(0, -43, 35.5))
+jd <- julianDayNumber(2000, 1, 1.5)
+nutAng <-  nutationAngles(jd)
+obliqJ2000 <- obliquity(jd, nutAng)
+obMean <- obliqJ2000[[1]][[1]] * RAD2DEG
+eclipt <- equatorialToEcliptic(ra, dec, obMean)
+print("Ecliptic Longitude - Lambda")
+dmsString(degToDMS(eclipt[[2]][[1]]))
+print("Ecliptic Latitude - Beta")
+dmsString(degToDMS(eclipt[[1]][[1]]))
+```
+
+# Convert ecliptic coordinates to equatorial coordinates
+# Ecliptic latitude - beta in degrees, arcminutes, and arcseconds
+# Ecliptic longitude in degrees, arcminutes, and arcseconds
+# Obliquity - Standard Epoch J2000
+```{r}
+beta <- dmsToDeg(c(1, 12, 0))
+lambda <- dmsToDeg(c(184, 36, 0))
+jd <- julianDayNumber(2000, 1, 1.5)
+nutAng <-  nutationAngles(jd)
+obliqJ2000 <- obliquity(jd, nutAng)
+obMean <- obliqJ2000[[1]][[1]] * RAD2DEG
+equat <- eclipticToEquatorial(beta, lambda, obMean)
+print("Right Ascension")
+dmsString(degToDMS(equat[[1]][[1]]))
+print("Declination")
+dmsString(degToDMS(equat[[2]][[1]]))
+```

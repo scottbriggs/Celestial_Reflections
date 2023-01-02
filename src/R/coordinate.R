@@ -78,7 +78,7 @@ rotationMatrix <- function(axis, phi)
 # obliquity in decimal degrees
 # eclipitic latitude in decimal degrees
 # ecliptic longitude in decimal degrees
-equatorialToEcliptical <- function(ra, dec, obliquity)
+equatorialToEcliptic <- function(ra, dec, obliquity)
 {
   sinRA <- sin(ra*15*DEG2RAD)
   cosRA <- cos(ra*15*DEG2RAD)
@@ -103,7 +103,7 @@ equatorialToEcliptical <- function(ra, dec, obliquity)
   }
   
   z <- c(beta, lambda)
-  names(z) <- c("Eclipt_Long", "Eclipt_Lat")
+  names(z) <- c("Ecliptic Latitude", "Ecliptic Longitude")
   
   return (z)
 }
@@ -112,7 +112,7 @@ equatorialToEcliptical <- function(ra, dec, obliquity)
 # ecliptic latitude - beta in decimal degrees, [-90 - + 90] degrees
 # ecliptic longitude - lambda in decimal degrees, [0 360] degrees
 # obliquity in decimal degrees
-eclipticalToEquatorial <- function(beta, lambda, obliquity)
+eclipticToEquatorial <- function(beta, lambda, obliquity)
 {
   sinBeta <- sin(beta*DEG2RAD)
   cosBeta <- cos(beta*DEG2RAD)
