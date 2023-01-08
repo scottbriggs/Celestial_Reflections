@@ -1,7 +1,8 @@
 # Calculate the position of the nutation angles (Longitude, Obliquity)
 # using the JPL DE 441 Ephemeris data
 
-# The nutation in longitude and obliquity angles are in units of radians
+# Calculate and return the  nutation in longitude and obliquity angles 
+# in units of radians
 nutationAngles <- function(jd)
 {
   # Read data file

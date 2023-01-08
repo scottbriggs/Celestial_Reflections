@@ -21,10 +21,10 @@ jd <- julianDayNumber(year, month, day)
 dt <- deltaT(year, month)
 st <- siderealTime(jd, dt)
 print("Greenwich Mean Sidereal Time (GMST) = ")
-gmst <- hourToHMS(st[["GMST"]][1]*RAD2HR)
+gmst <- hourToHMS(st[[1]][1]*RAD2HR)
 hmsString(gmst)
 print("Greenwich Apparent Sidereal Time (GAST) = ")
-gast <- hourToHMS(st[["GAST"]][1]*RAD2HR)
+gast <- hourToHMS(st[[2]][1]*RAD2HR)
 hmsString(gast)
 ```
 # Find the mean and apparent sidereal time at Greenwich on 1987 April 10 at
@@ -36,13 +36,43 @@ jd <- julianDayNumber(1987, 4, (10+hour/24))
 dt <- deltaT(year, month)
 st <- siderealTime(jd, dt)
 print("Greenwich Mean Sidereal Time (GMST) = ")
-gmst <- hourToHMS(st[["GMST"]][1]*RAD2HR)
+gmst <- hourToHMS(st[[1]][1]*RAD2HR)
 hmsString(gmst)
 print("Greenwich Apparent Sidereal Time (GAST) = ")
-gast <- hourToHMS(st[["GAST"]][1]*RAD2HR)
+gast <- hourToHMS(st[[2]][1]*RAD2HR)
 hmsString(gast)
 ```
-
+# Test local civil time to universal time function, no daylight savings time
+# Eastern standard time zone
 ```{r}
+hr <- localCivilTimeToUniversalTime(18, FALSE, -5)
+print("Local Civil Time in hours")
+hr
+```
 
+
+# Test local civil time to universal time function, with daylight savings time
+# Eastern standard time zone
+```{r}
+hr <- localCivilTimeToUniversalTime(18, TRUE, -5)
+print("Local Civil Time in hours")
+hr
+```
+
+
+# Test universal time to local civil function, no daylight savings time
+# Eastern standard time zone
+```{r}
+hr <- universalTimeToLocalCivilTime(23.5, FALSE, -5)
+print("Universal Time in hours")
+hr
+```
+
+
+# Test universal time to local civil function, with daylight savings time
+# Eastern standard time zone
+```{r}
+hr <- universalTimeToLocalCivilTime(23.5, TRUE, -5)
+print("Local Civil Time in hours")
+hr
 ```

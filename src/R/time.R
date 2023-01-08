@@ -208,21 +208,69 @@ siderealTime <- function(jd_ut, deltaT)
   ob <- obliquity(jd_td, nut_angles)
   
   # Calculate apparent sidereal time
-  gast <- gmst + nut_angles["Nut_Long"] * cos(ob["True_Obliquity"])
+  gast <- gmst + nut_angles[[1]][1] * cos(ob[2])
   
   z <- c(gmst, gast)
-  names(z) <- c("GMST", "GAST")
-  
+
   return (z)
 }
 
-# Julian day number corrected for local civil time including
-# daylight savings time and time zone
-# year, month, and day of interest
-# dst - daylight savings time, 1 for dst, otherwise 0
+# Convert local civil time to universal time with adjustments for time
+# zone and daylight savings time
+# decimal hour indicating the hour on the day of interest
 # tz - time zone correction, negative if time zone is west of Greenwich,
 # positive if east of Greenwich
-timeZoneCorrection <- function(year, month, day, dst, tz)
+# dst - daylight savings time, TRUE if daylight savings time is in effect
+localCivilTimeToUniversalTime <- function(hour, dst, tz)
 {
+  hr <- hour
   
+  # Adjust for daylight savings time
+  if (dst == TRUE) {
+    hr <- hr - 1
+  }
+  
+  # Adjust for time zone
+  hr <- hr - tz
+  
+  # Check boundary conditions
+  if (hr > 24) {
+    hr <- hr - 24
+    print("The time is for the next day")
+  } else if (hr < 0) {
+    hr <- hr + 24
+    print("The time is for the previous day")
+  }
+  
+  return (hr)
+}
+
+# Convert universal time to local civil time with adjustments for time
+# zone and daylight savings time
+# decimal hour indicating the hour on the day of interest
+# tz - time zone correction, negative if time zone is west of Greenwich,
+# positive if east of Greenwich
+# dst - daylight savings time, TRUE if daylight savings time is in effect
+universalTimeToLocalCivilTime <- function(hour, dst, tz)
+{
+  hr <- hour
+  
+  # Adjust for time zone
+  hr <- hr + tz
+  
+  # Check boundary conditions
+  if (hr < 0) {
+    hr <- hr + 24
+    print("Time is for the next day")
+  } else if (hr > 24) {
+    hr <- hr - 24
+    print("Time is for the previous day")
+  }
+  
+  # Adjust for daylight savings time
+  if (dst == TRUE) {
+    hr <- hr + 1
+  }
+  
+  return (hr)
 }
