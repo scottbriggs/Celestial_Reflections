@@ -147,6 +147,7 @@ eclipticToEquatorial <- function(beta, lambda, obliquity)
 # altitude in decimal degrees, [-90 - +90] degrees
 # hour angle in decimal hours, [0 - 24] hours
 # declination in decimal degrees, [-90 - +90] degrees
+# observer latitude in decimal degrees, [-90, +90] degrees
 equatorialToHorizon <- function(hourAngle, dec, obs_lat)
 {
   cosH <- cos(hourAngle*15*DEG2RAD)

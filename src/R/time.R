@@ -199,7 +199,7 @@ siderealTime <- function(jd_ut, deltaT)
   gmst <- gmst * DEG2RAD
   
   # Calculate dynamical time
-  jd_td <- jd_ut + deltaT/24
+  jd_td <- jd_ut + deltaT/SEC2DAY
   
   # Get the nutation angles in longitude and obliquity
   nut_angles <- nutationAngles(jd_td)

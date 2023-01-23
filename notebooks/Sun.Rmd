@@ -1,0 +1,69 @@
+---
+title: "Test Functions for the Sun"
+output: html_notebook
+---
+
+# Test functions for the Sum
+
+```{r}
+library(here)
+library(arrow)
+library(ggplot2)
+source(here("src", "R", "scripts.R"))
+```
+
+# Calculate the daily motion of the Sun in azimuth and altitude
+```{r}
+# Input parameters for Wylie, TX
+year <- 2023
+month <- 1
+day <- 22
+obsLat <- 33.0063
+obsLong <- -96.5391
+
+# Convert local civil time in Wylie, TX to universal time using a time zone correction
+# for Central time and daylight savings time if in effect
+zone <- localCivilTimeToUniversalTime(0, FALSE, -6)
+
+# Create data frame to store data
+df <- data.frame(matrix(0.0, nrow=24, ncol=6))
+names(df) <- c("Hour", "RA", "DEC", "Hour Angle" ,"Altitude", "Azimuth")
+
+# Calculate JD_UT and JD_DT
+jd_ut <- julianDayNumber(year, month, day)
+deltaT <- deltaT(year, month)
+jd_td <- jd_ut + deltaT/SEC2DAY
+df[1,"Hour"] = 0
+
+# Calculate position of the Sun for each hour on a single day
+for (i in seq(from = 1, to = 23, by = 1))
+{
+  pos <- apparentPlaceSun(jd_td)
+  polar <- rectToPolar(pos[[1]][[1]], pos[[1]][[2]], pos[[1]][[3]])
+  df[i,"RA"] <- polar[3]
+  df[i,"DEC"] <- polar[2]
+  sidTime <- siderealTime(jd_ut - df[i,"Hour"]/24, deltaT)
+  #hourAngle <- sidTime[1] + obsLong*DEG2RAD - df[i,"RA"]
+  hourAngle <- sidTime[1] - df[i,"RA"]
+  df[i,"Hour Angle"] <- hourAngle * RAD2HR
+  tmp <- equatorialToHorizon(df[i,"Hour Angle"], df[i,"DEC"]*RAD2DEG, obsLat)
+  df[i,"Azimuth"] <- tmp[1]
+  df[i,"Altitude"] <- tmp[2]
+  df[i+1,"Hour"] <- df[i,"Hour"] + 1
+}
+print(df)
+```
+
+# Plot the variation in alitude of the Sun for a single day
+```{r}
+ggplot(data=df, aes(x=df[,"Hour"], y=df[,"Altitude"])) + geom_line() +
+  geom_point()
+```
+
+
+# Plot the variation in azimuth of the Sun for a single day
+```{r}
+ggplot(data=df, aes(x=df[,"Hour"], y=df[,"Azimuth"])) + geom_line() +
+  geom_point()
+```
+

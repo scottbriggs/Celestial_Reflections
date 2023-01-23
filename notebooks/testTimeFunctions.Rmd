@@ -76,3 +76,10 @@ hr <- universalTimeToLocalCivilTime(23.5, TRUE, -5)
 print("Local Civil Time in hours")
 hr
 ```
+
+
+```{r}
+hr <- localCivilTimeToUniversalTime(20, FALSE, -5)
+print("Local Civil Time in hours")
+hr
+```

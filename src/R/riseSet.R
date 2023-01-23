@@ -2,6 +2,71 @@
 # Functions to calculate rise, transit, and set times of the planets, Sun,
 # and Moon
 
+riseSetSun <- function(year, month, day, obsLat, obsLong)
+{
+  tmp <- data.frame(matrix(0.0, nrow=25, ncol=16))
+  colnames(tmp) <- c("Year", "Month", "Day", "JD_UT", "JD_TD", "Hour", "sin(h0)",
+                     "RA", "DEC", "sin(h)", "sin(h) - sin(h0)", "xe", "ye",
+                     "root1", "root2", "num_roots")
+  jd_ut <- julianDayNumber(year, month, day)
+  deltaT <- deltaT(year, month)
+  jd_td <- jd_ut + deltaT / SEC2DAY
+  h0 <- -34/60*DEG2RAD
+  sinh0 <- sin(h0)
+  sinObsLat <- sin(obsLat*DEG2RAD)
+  cosObsLat <- cos(obsLat*DEG2RAD)
+  
+  # Populate year, month, day, jd,and hour
+  for (i in seq(from = 1, to = 25, by = 1))
+  {
+    tmp[i,"Year"] <- year
+    tmp[i,"Month"] <- month
+    tmp[i,"Day"] <- day
+    tmp[i,"JD_UT"] <- jd_ut
+    tmp[i,"JD_TD"] <- jd_td
+    tmp[i,"Hour"] <- i - 1
+    tmp[i,"sin(h0)"] <- sinh0
+  }
+  
+  for (i in seq(from = 1, to = 25, by = 1))
+  {
+    # Apparent place of the Sun
+    pos <- apparentPlaceSun(tmp[i,"JD_TD"] - tmp[i,"Hour"]/24)
+    
+    # Convert equatorial coordinates to RA and DEC
+    polar <- rectToPolar(pos[[1]][[1]], pos[[1]][[2]], pos[[1]][[3]])
+    
+    # Add RA and DEC to table
+    tmp[i,"RA"] <- polar[3]
+    tmp[i,"DEC"] <- polar[2]
+    
+    # Calculate the sidereal time for the hour angle
+    sidTime <- siderealTime(as.integer(tmp[i,"JD_UT"]), deltaT)
+    hourAngle <- sidTime[1] + obsLong*DEG2RAD - tmp[i,"RA"]
+    
+    # Calculate sin(h)
+    tmp[i,"sin(h)"] <- cosObsLat * cos(tmp[i, "DEC"]) * cos(hourAngle) + 
+      sinObsLat * sin(tmp[i,"DEC"])
+    
+    tmp[i,"sin(h) - sin(h0)"] <- tmp[i, "sin(h)"] - tmp[i, "sin(h0)"]
+  }
+  
+  # Calculate roots
+  for (i in seq(from = 1, to = 23, by = 2))
+  {
+    y_minus <- tmp[i,"sin(h) - sin(h0)"]
+    y_0 <- tmp[i+1,"sin(h) - sin(h0)"]
+    y_plus <- tmp[i+2,"sin(h) - sin(h0)"]
+    quad <- quadraticInterpolation(y_minus, y_0, y_plus)
+    tmp[i,"xe"] <- quad[1]
+    tmp[i,"ye"] <- quad[2]
+    tmp[i,"root1"] <- quad[3]
+    tmp[i,"root2"] <- quad[4]
+    tmp[i,"num_roots"] <- quad[5]
+  }
+  return(tmp)
+}
+
 # jd_ut is the universal time for the event of interest
 # deltaT is the different in seconds between universal time and dynamical time
 # obslat is the observer latitude in degrees, +N, -S
@@ -39,19 +104,19 @@ riseSetVenus <- function(jd_ut, deltaT, obsLat, obsLong)
   
   # apparent place of the planet on day-1
   pos <- apparentPlaceVenus(jd_td - 1)
-  polar <- rectToPolar(pos)
+  polar <- rectToPolar(pos[[1]][1], pos[[1]][2], pos[[1]][3])
   ra1 <- polar[2]
   dec1 <- polar[3]
   
   # apparent place of the planet on day
   pos <- apparentPlaceVenus(jd_td)
-  polar <- rectToPolar(pos)
+  polar <- rectToPolar(pos[[1]][1], pos[[1]][2], pos[[1]][3])
   ra2 <- polar[2]
   dec2 <- polar[3]
   
   # apparent place of the planet on day+1
   pos <- apparentPlaceVenus(jd_td + 1)
-  polar <- rectToPolar(pos)
+  polar <- rectToPolar(pos[[1]][1], pos[[1]][2], pos[[1]][3])
   ra3 <- polar[2]
   dec3 <- polar[3]
   
@@ -89,7 +154,7 @@ riseSetVenus <- function(jd_ut, deltaT, obsLat, obsLong)
   H0 <- acos(cosH0) * RAD2DEG
   H0 <- amodulo(H0, 180)
   
-  m0 <- (ra2 * RAD2DEG + obsLong - sid_time[["GAST"]][1] * RAD2DEG) / 360
+  m0 <- (ra2 * RAD2DEG + obsLong - sid_time[[2]][1] * RAD2DEG) / 360
   
   if (m0 < 0) {
     m0 <- m0 + 1
@@ -113,17 +178,17 @@ riseSetVenus <- function(jd_ut, deltaT, obsLat, obsLong)
     m2 <- m2 - 1
   }
   
-  thetaM0 <- sid_time[["GAST"]][1] * RAD2DEG + 360.985647 * m0
+  thetaM0 <- sid_time[[2]][1] * RAD2DEG + 360.985647 * m0
   if (thetaM0 > 360){
     thetaM0 <- thetaM0 - 360
   }
   
-  thetaM1 <- sid_time[["GAST"]][1] * RAD2DEG + 360.985647 * m1
+  thetaM1 <- sid_time[[2]][1] * RAD2DEG + 360.985647 * m1
   if (thetaM1 > 360){
     thetaM1 <- thetaM1 - 360
   }
   
-  thetaM2 <- sid_time[["GAST"]][1] * RAD2DEG + 360.985647 * m2
+  thetaM2 <- sid_time[[2]][1] * RAD2DEG + 360.985647 * m2
   if (thetaM2 > 360){
     thetaM2 <- thetaM2 - 360
   }
@@ -215,12 +280,11 @@ quadraticInterpolation <- function(yMinus, y, yPlus)
     if (root1 < -1) {
       root1 <- root2
     }
-    
-    z <- c(xe, ye, root1, root2, nRoot)
-    names(z) <- c("Abscissa", "Ordinate", "Root 1", "Root2", "Num Roots")
-    
-    return (z)
   }
+    
+  z <- c(xe, ye, root1, root2, nRoot)
+    
+  return (z)
 }
 
 # Rise - Set for the Sun using the method outlined in Astronomy on the 
