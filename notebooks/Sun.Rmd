@@ -42,7 +42,7 @@ for (i in seq(from = 1, to = 23, by = 1))
   polar <- rectToPolar(pos[[1]][[1]], pos[[1]][[2]], pos[[1]][[3]])
   df[i,"RA"] <- polar[3]
   df[i,"DEC"] <- polar[2]
-  sidTime <- siderealTime(jd_ut - df[i,"Hour"]/24, deltaT)
+  sidTime <- gst(jd_ut - df[i,"Hour"]/24, deltaT)
   #hourAngle <- sidTime[1] + obsLong*DEG2RAD - df[i,"RA"]
   hourAngle <- sidTime[1] - df[i,"RA"]
   df[i,"Hour Angle"] <- hourAngle * RAD2HR

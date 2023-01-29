@@ -209,3 +209,80 @@ horizonToEquatorial <- function(azimuth, altitude, obs_lat)
   
   return(z)
 }
+
+findHorizonCoordSun <- function(year, month, day, hour, tz, dst, obsLat, obsLong)
+{
+  # Convert local civil time to universal time
+  hr <- hour
+  dy <- day
+  
+  # Adjust for daylight savings time
+  if (dst == TRUE) {
+    hr <- hr - 1
+  }
+   # Adjust for the time zone
+  hr <- hr - tz
+  
+  # Check boundary conditions
+  if (hr > 24) {
+    hr <- hr - 24
+    # Time is for the next day
+    dy <- dy + 1
+  } else if (hr < 0) {
+    hr <- hr + 24
+    # The time is for the previous day
+    dy <- dy - 1
+  }
+  
+  # Convert universal time to Greenwich sidereal time
+  # Calculate the julian day number for universal time
+  jd_ut <- julianDayNumber(year, month, dy + hr/24)
+  # Calculate delta t in seconds
+  delta_t <- deltaT(year, month)
+  # Calculate the julian day number for dynamical time
+  jd_td <- jd_ut + delta_t / SEC2DAY
+  # Calculate Greenwich sidereal time
+  gSidTime <- gst(jd_ut, delta_t)
+  
+  # Convert Greenwich sidereal time to local sideral time
+  lst <- gstToLst(gSidTime[[1]][1], obsLong)
+  
+  # Calculate the apparent place of the Sun in RA and Dec
+  pos_sun <- apparentPlaceSun(jd_td)
+  polar <- rectToPolar(pos_sun[[1]][[1]], pos_sun[[1]][[2]], pos_sun[[1]][[3]])
+  RA <- polar[3]
+  Dec <- polar[2]
+  
+  # Convert the right ascension to the hour angle
+  ha <- lst - RA
+  
+  # Convert equatorial coordinates to horizon coordinates
+  hor_coord <- equatorialToHorizon(ha*RAD2HR, Dec*RAD2DEG, obsLat)
+  
+  res <- list(year, month, dy, hr, jd_ut, hr, hor_coord)
+  names(res) <- c("Year", "Month", "Day", "Hour", "JD_UT", "Horizon Coord")
+  
+  return(res)
+}
+
+# Calculate the altitude and azimuth of the Sun over a single day
+findAltAzmSunDay <- function(year, month, day, tz, dst, obsLat, obsLong)
+{
+  # Create data frame to store data
+  df <- data.frame(matrix(0.0, nrow=24, ncol=6))
+  
+  for (i in seq(from = 1, to = 24, by = 1))
+  {
+    df[i,1] <- year
+    df[i,2] <- month
+    df[i,3] <- day
+    hr <- i-1
+    df[i,4] <- hr
+    hor_coord <- findHorizonCoordSun(year, month, day, 
+                                     hr, tz, dst, obsLat, obsLong)
+    df[i,5] <- hor_coord[[7]][1]
+    df[i,6] <- hor_coord[[7]][2]
+  }
+  
+  return(df)
+}

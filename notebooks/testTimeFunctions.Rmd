@@ -19,7 +19,7 @@ month <- 4
 day <- 10
 jd <- julianDayNumber(year, month, day)
 dt <- deltaT(year, month)
-st <- siderealTime(jd, dt)
+st <- gst(jd, dt)
 print("Greenwich Mean Sidereal Time (GMST) = ")
 gmst <- hourToHMS(st[[1]][1]*RAD2HR)
 hmsString(gmst)
@@ -34,7 +34,7 @@ hms <- c(19, 21, 0)
 hour <- hmsToHour(hms)
 jd <- julianDayNumber(1987, 4, (10+hour/24))
 dt <- deltaT(year, month)
-st <- siderealTime(jd, dt)
+st <- gst(jd, dt)
 print("Greenwich Mean Sidereal Time (GMST) = ")
 gmst <- hourToHMS(st[[1]][1]*RAD2HR)
 hmsString(gmst)
@@ -42,6 +42,24 @@ print("Greenwich Apparent Sidereal Time (GAST) = ")
 gast <- hourToHMS(st[[2]][1]*RAD2HR)
 hmsString(gast)
 ```
+
+# Calculate the hour angle of the Sun for a single day using the right ascension
+```{r}
+# Right Ascension in hours of the Sun on January 23, 2023
+ra <-hmsToHour(c(20, 19, 54)) * HR2RAD
+obsLong <- -96.5391 * DEG2RAD
+year <- 2023
+month <- 1
+day <- 22.5
+jd <- julianDayNumber(year, month, day+4/24)
+dt <- deltaT(year, month)
+st <- gst(jd, dt)
+lha <- st[[1]][1] - obsLong - ra
+lha <- lha*RAD2HR
+print(lha)
+```
+
+
 # Test local civil time to universal time function, no daylight savings time
 # Eastern standard time zone
 ```{r}

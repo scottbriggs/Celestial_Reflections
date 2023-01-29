@@ -182,9 +182,9 @@ deltaT <- function(year, month)
   return (delta_t)
 }
 
-# Calculate the mean and apparent sidereal time in radians
-# jd is the julian day number in universal time at the time of observation
-siderealTime <- function(jd_ut, deltaT)
+# Calculate the mean and apparent sidereal time at Greenwich in radians
+# jd is the julian day number in universal time for the time of observation
+gst <- function(jd_ut, deltaT)
 {
   T <- (jd_ut - EPOCHJ2000) / DAYSJULCENT
   
@@ -213,6 +213,25 @@ siderealTime <- function(jd_ut, deltaT)
   z <- c(gmst, gast)
 
   return (z)
+}
+
+# Convert sidereal time at Greenwich to local sidereal time at the observer
+# location
+# gst - sidereal time at Greenwich in radians
+# obsLong - observer longitude in decimal degrees, +E, -W
+# lst - local sidereal time in radians
+gstToLst <- function(gst, obsLong)
+{
+  tz_adj <- obsLong / 15
+  lst <- gst + tz_adj*HR2RAD
+  
+  if (lst < 0) {
+    lst <- lst + PI2
+  } else if (lst > PI2) {
+    lst <- lst - PI2
+  }
+  
+  return(lst)
 }
 
 # Convert local civil time to universal time with adjustments for time
